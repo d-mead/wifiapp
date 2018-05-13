@@ -2,6 +2,7 @@ import UIKit
 import MapKit
 //a change just to check git
 //CHECKING GIT PART 3
+//Checking part 4
 protocol HandleMapSearch {
   func dropPinZoomIn(placemark:MKPlacemark)
 }
