@@ -222,7 +222,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     if editingStyle == .delete {
       print("begining delete")
       remove(geotification: geotifications[indexPath.row])
-      removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
+      //removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
       //geoTable.deleteRows(at: [indexPath], with: .fade)
       
       print("delete in tableView finished, count: " + String(geotifications.count))

@@ -290,7 +290,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.258896"
+            timestampString = "547916834.084797"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "237"
@@ -306,7 +306,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/AddMarkerViewController.swift"
-            timestampString = "547880714.260915"
+            timestampString = "547916834.085013"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "71"
@@ -322,7 +322,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.261207"
+            timestampString = "547916834.085139"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "162"
@@ -338,7 +338,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.261483"
+            timestampString = "547916834.085343"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "76"
@@ -354,7 +354,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.26171"
+            timestampString = "547916834.085484"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "378"
@@ -370,7 +370,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.261903"
+            timestampString = "547916834.085586"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "379"
@@ -386,7 +386,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.262064"
+            timestampString = "547916834.085694"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "155"
@@ -402,7 +402,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.262208"
+            timestampString = "547916834.085779"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "370"
@@ -418,7 +418,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.262327"
+            timestampString = "547916834.085879"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "77"
@@ -430,11 +430,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.262481"
+            timestampString = "547916834.0859751"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "59"
@@ -446,11 +446,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.2626441"
+            timestampString = "547916834.0861239"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "293"
@@ -466,12 +466,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "547880714.262851"
+            timestampString = "547916834.0862319"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "316"
             endingLineNumber = "316"
             landmarkName = "add(geotification:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Geotify/AppDelegate.swift"
+            timestampString = "547916834.086355"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "handleEventEnter(forRegion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

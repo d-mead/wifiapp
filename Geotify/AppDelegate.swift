@@ -41,9 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   //if the user enters the location
   func handleEventEnter(forRegion region: CLRegion!) {
     print("Geofence Entered")
+    print(String(isInternetAvailable()))
     if !isInternetAvailable() {
+      
       Timer.scheduledTimer(timeInterval: 9.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
-    
+    print("this far")
       guard let identif = note(fromRegionIdentifier: region.identifier) else { return } //gets the name of the marker
       print("name: " + identif)
       guard let time = delay(fromRegionIdentifier: region.identifier) else { return } //gets the delay time of the marker
@@ -54,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let content = UNMutableNotificationContent()
         content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
         content.body = NSString.localizedUserNotificationString(forKey: identif, arguments: nil)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time*60)), repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time*60+1)), repeats: false)
         let request = UNNotificationRequest(identifier: identif, content: content, trigger: trigger)
     
         print("added")
@@ -125,7 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   //to check if internet is connected
   func isInternetAvailable() -> Bool
   {
-    var zeroAddress = sockaddr_in()
+    var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
     zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
     zeroAddress.sin_family = sa_family_t(AF_INET)
     
@@ -135,13 +137,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       }
     }
     
-    var flags = SCNetworkReachabilityFlags()
-    if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+    var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
+    if SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) == false {
       return false
     }
-    let isReachable = flags.contains(.reachable)
-    let needsConnection = flags.contains(.connectionRequired)
-    return (isReachable && !needsConnection)
+    
+     //Only Working for WIFI
+     let isReachable = flags == .reachable
+     let needsConnection = flags == .connectionRequired
+     
+     return isReachable && !needsConnection
+ 
   }
 }
   
