@@ -106,16 +106,17 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     if (point.y > maxPoint.y)
     {maxPoint.y = point.y}
   }
-    
-    let point = MKMapPointForCoordinate((locationManager.location?.coordinate)!)
-    if (point.x < minPoint.x)
-    {minPoint.x = point.x}
-    if (point.y < minPoint.y)
-    {minPoint.y = point.y}
-    if (point.x > maxPoint.x)
-    {maxPoint.x = point.x}
-    if (point.y > maxPoint.y)
-    {maxPoint.y = point.y}
+    if locationManager.location != nil {
+      let point = MKMapPointForCoordinate((locationManager.location?.coordinate)!)
+      if (point.x < minPoint.x)
+      {minPoint.x = point.x}
+      if (point.y < minPoint.y)
+      {minPoint.y = point.y}
+      if (point.x > maxPoint.x)
+      {maxPoint.x = point.x}
+      if (point.y > maxPoint.y)
+      {maxPoint.y = point.y}
+    }
     
     
     let mapRect = MKMapRectMake(minPoint.x, minPoint.y, maxPoint.x - minPoint.x, maxPoint.y - minPoint.y)
@@ -221,6 +222,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     if editingStyle == .delete {
       print("begining delete")
       remove(geotification: geotifications[indexPath.row])
+      removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
       //geoTable.deleteRows(at: [indexPath], with: .fade)
       
       print("delete in tableView finished, count: " + String(geotifications.count))
@@ -318,6 +320,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     addRadiusOverlay(forGeotification: geotification)
     geoTable.reloadData()
     updateGeotificationsCount()
+    startMonitoring(geotification: geotification)
     print("new made")
     zoomAnnotationsOnMapView()
     showTable()
@@ -381,7 +384,7 @@ extension MarkerViewController: AddMarkerViewControllerDelegate {
     geotification.makeLoc()
     print("making loc")
     add(geotification: geotification)
-    startMonitoring(geotification: geotification)
+    addRadiusOverlay(forGeotification: geotification)
     saveAllGeotifications()
   }
   
