@@ -432,6 +432,8 @@ extension MarkerViewController: CLLocationManagerDelegate {
   }
   func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
     print("Monitoring failed for region with identifier: \(region!.identifier)")
+    print(String(describing: error))
+    //self.locationManager.startMonitoring(for: region!)
   }
   
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

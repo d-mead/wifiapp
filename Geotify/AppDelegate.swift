@@ -43,22 +43,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     print("Geofence Entered")
     print(String(isInternetAvailable()))
     if !isInternetAvailable() {
-      
-      Timer.scheduledTimer(timeInterval: 9.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
     print("this far")
-      guard let identif = note(fromRegionIdentifier: region.identifier) else { return } //gets the name of the marker
-      print("name: " + identif)
-      guard let time = delay(fromRegionIdentifier: region.identifier) else { return } //gets the delay time of the marker
-      print("delay: " + String(time))
-      guard let on = on(fromRegionIdentifier: region.identifier) else { return } //gets the on/off boolean of the marker
-      print("on: " + String(on))
-      if on {
+      let geotification = geo(fromRegion: region)
+      let identif = geotification?.name
+      print("name: " + identif!)
+      let time = geotification?.delay
+      print("delay: " + String(describing: time))
+      let on = geotification?.on
+      print("on: " + String(describing: on))
+      if on! {
         let content = UNMutableNotificationContent()
         content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
-        content.body = NSString.localizedUserNotificationString(forKey: identif, arguments: nil)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time*60+1)), repeats: false)
-        let request = UNNotificationRequest(identifier: identif, content: content, trigger: trigger)
-    
+        content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+5)), repeats: false)
+        Timer.scheduledTimer(timeInterval: (TimeInterval(time!*60)), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
+        let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)
+        
         print("added")
         center.add(request) { (error : Error?) in
           if let theError = error {
@@ -103,6 +103,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   //gets the name of the geotification
+  
+  func geo(fromRegion: CLRegion) -> Geotification? {
+    let savedItems = UserDefaults.standard.array(forKey: PreferencesKeys.savedItems) as? [NSData]
+    let geotifications = savedItems?.map { NSKeyedUnarchiver.unarchiveObject(with: $0 as Data) as? Geotification }
+    for geo in geotifications! {
+      if CLCircularRegion(center: (geo?.coordinate)!, radius: (geo?.radius)!, identifier: (geo?.identifier)!).contains((locationManager.location?.coordinate)!) {
+        return geo
+      }
+    }
+    return geotifications?[0]
+  }
+  
   func note(fromRegionIdentifier identifier: String) -> String? {
     let savedItems = UserDefaults.standard.array(forKey: PreferencesKeys.savedItems) as? [NSData]
     let geotifications = savedItems?.map { NSKeyedUnarchiver.unarchiveObject(with: $0 as Data) as? Geotification }
