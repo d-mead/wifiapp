@@ -58,6 +58,12 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     
     locationManager.delegate = self
     locationManager.requestAlwaysAuthorization()
+    var c = 0
+    for reg in locationManager.monitoredRegions {
+      //locationManager.stopMonitoring(for: reg)
+      c = c + 1
+      print(String(c))
+    }
     loadAllGeotifications()
     for geo in geotifications {
       geo.makeLoc()
@@ -74,12 +80,9 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     mapView.showAnnotations(mapView.annotations, animated: false)
     timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
     showTable()
-    
-    /*self.mapView.addAnnotations(mapView.annotations)
-    let currentView = mapView.visibleMapRect
-    mapView.annotations(in: currentView)*/
     zoomAnnotationsOnMapView()
     showTable()
+    
   }
   
   func zoomAnnotationsOnMapView()
@@ -88,24 +91,21 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       return
     }
   
-  // Step 1: make an MKMapRect that contains all the annotations
-    _ = mapView.annotations;
-  
     let firstAnnotation = mapView.annotations[0]
-  var minPoint = MKMapPointForCoordinate(firstAnnotation.coordinate)
-  var maxPoint = minPoint
-  
-  for annotation in mapView.annotations {
-    let point = MKMapPointForCoordinate(annotation.coordinate)
-    if (point.x < minPoint.x)
-    {minPoint.x = point.x}
-    if (point.y < minPoint.y)
-    {minPoint.y = point.y}
-    if (point.x > maxPoint.x)
-    {maxPoint.x = point.x}
-    if (point.y > maxPoint.y)
-    {maxPoint.y = point.y}
-  }
+    var minPoint = MKMapPointForCoordinate(firstAnnotation.coordinate)
+    var maxPoint = minPoint
+    
+    for annotation in mapView.annotations {
+      let point = MKMapPointForCoordinate(annotation.coordinate)
+      if (point.x < minPoint.x)
+      {minPoint.x = point.x}
+      if (point.y < minPoint.y)
+      {minPoint.y = point.y}
+      if (point.x > maxPoint.x)
+      {maxPoint.x = point.x}
+      if (point.y > maxPoint.y)
+      {maxPoint.y = point.y}
+    }
     if locationManager.location != nil {
       let point = MKMapPointForCoordinate((locationManager.location?.coordinate)!)
       if (point.x < minPoint.x)
@@ -118,17 +118,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       {maxPoint.y = point.y}
     }
     
-    
     let mapRect = MKMapRectMake(minPoint.x, minPoint.y, maxPoint.x - minPoint.x, maxPoint.y - minPoint.y)
   
-  // Step 2: Calculate the edge padding
-  
-  /*let edgePadding = UIEdgeInsetsMake(
-    CGRectGetMinY(10),
-    CGRectGetMinX(10),
-    CGRectGetMaxY(20) - CGRectGetMaxY(10),
-    CGRectGetMaxX(20) - CGRectGetMaxX(10)
-  )*/
     let navigatorHeight = 44
     let constant = 40
     let bottomHeight = 44*4 + CGFloat(navigatorHeight + constant)
@@ -138,8 +129,6 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       bottomHeight,
       CGFloat(constant))
   
-  // Step 3: Set the map rect
-    //mapView.setVisibleMapRect(mapRect: mapRect, edgePadding: edgePadding, animated: true)
     mapView.setVisibleMapRect(mapRect, edgePadding: edgePadding, animated: true)
   }
   
@@ -395,8 +384,9 @@ extension MarkerViewController: EditMarkerViewControllerDelegate {
   func editMarkerViewController(controller: EditMarkerViewController, didAddCoordinate coordinate: CLLocationCoordinate2D, radius: Double, identifier: String, note: String, editing: Geotification, delay: Int, on: Bool) {
     controller.dismiss(animated: true, completion: nil)
     if identifier == "-1" {
-      remove(geotification: editingGeo!)
+      remove(geotification: geotifications[geoNames.index(of: (editingGeo?.name)!)!])
     } else {
+      stopMonitoring(geotification: editingGeo!)
       removeRadiusOverlay(forGeotification: editingGeo!)
       geoNames[geoNames.index(of: (editingGeo?.name)!)!] = note
       //editingGeo?.makeLoc()
@@ -418,6 +408,7 @@ extension MarkerViewController: EditMarkerViewControllerDelegate {
       timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
       //geoTable.reloadData()
       print("edits made")
+      startMonitoring(geotification: editingGeo!)
       saveAllGeotifications()
     }
     zoomAnnotationsOnMapView()

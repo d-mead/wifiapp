@@ -77,7 +77,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   
   func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
     if(row == 0){
-      selectedTime = 1
+      selectedTime = 0
     } else {
       selectedTime = pickerData[row]
     }
