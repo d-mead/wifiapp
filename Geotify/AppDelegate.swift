@@ -39,6 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func handleEventEnter(forRegion region: CLRegion!) {
     print("marker location entered")
     if !isInternetAvailable() {
+      
       print("the internet is not connected")
       let geotification = geo(fromRegion: region)
       if geotification != nil {
@@ -48,14 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("delay: " + String(describing: time))
         let on = geotification?.on
         print("on: " + String(describing: on))
+        
         if on! {
-          var waitDelay = time!*15
-          timer = Timer.scheduledTimer(timeInterval: TimeInterval(15), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
           
           let content = UNMutableNotificationContent()
           content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
           content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
-          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*15+1)), repeats: false)
+          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*20+1)), repeats: false)
 
           let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)
           center.add(request) { (error : Error?) in
@@ -64,13 +64,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             print("notification scheduled")
           }
+          let wait: Int = (time!*20)-5
+          timer = Timer.scheduledTimer(timeInterval: TimeInterval(wait), target: self, selector: #selector(updateNotification), userInfo: nil, repeats: true)
         }
         else {
           print("marker is turned off")
         }
       }
-      }
+    } else {
       print("internet was avalable")
+    }
   }
   
   //if the user exits the location
