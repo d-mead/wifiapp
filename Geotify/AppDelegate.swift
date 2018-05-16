@@ -12,11 +12,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   let locationManager = CLLocationManager()
   var counter = 0
-  var timer = Timer()
+  var timer: Timer? = nil
   var selectedTime: Int = 0
   var curRegion: CLRegion = CLRegion()
   var left = false
   var center = UNUserNotificationCenter.current()
+  var count = 0
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
     locationManager.delegate = self as CLLocationManagerDelegate
@@ -25,7 +26,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
     }
     print("testing")
+    //Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
+    locationManager.allowsBackgroundLocationUpdates = true
+    locationManager.startUpdatingLocation()
+    //locationManager.stopUpdatingLocation()
+    self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
     return true
+    
   }
   
   func setTime(selectedTime: Int)
@@ -43,19 +50,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print("the internet is not connected")
       let geotification = geo(fromRegion: region)
       if geotification != nil {
+        //Timer.scheduledTimer(timeInterval: 9.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
         let identif = geotification?.name
         print("name: " + identif!)
         let time = geotification?.delay
         print("delay: " + String(describing: time))
         let on = geotification?.on
         print("on: " + String(describing: on))
-        
         if on! {
-          
+          count = time!*6
+          DispatchQueue.main.async {
+            self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
+          }
+          locationManager.startUpdatingLocation()
           let content = UNMutableNotificationContent()
           content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
           content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
-          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*20+1)), repeats: false)
+          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+1)), repeats: false)
 
           let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)
           center.add(request) { (error : Error?) in
@@ -64,8 +75,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             print("notification scheduled")
           }
-          let wait: Int = (time!*20)-5
-          timer = Timer.scheduledTimer(timeInterval: TimeInterval(wait), target: self, selector: #selector(updateNotification), userInfo: nil, repeats: true)
         }
         else {
           print("marker is turned off")
@@ -82,18 +91,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     guard let identif = note(fromRegionIdentifier: region.identifier) else { return } //gets the name of the marker
     let identifArray = [identif]
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
+    count = 0
     print("removed pending notification")
   }
   
   //deletes the notification just before being sent if wifi is connected
   @objc func updateNotification()
   {
-    print("wifi status updating...")
-    if isInternetAvailable()
-    {
-      print("notification removed: wifi connected")
-      center.removeAllPendingNotificationRequests()
+    update()
+  }
+  func update()
+  {
+    print("arrived")
+    if count > 0 {
+      
+      printThis(message: "wifi status updating over 2")
+      count = count - 1
+      print(String(count))
+      locationManager.requestLocation()
+      DispatchQueue.main.async {
+        //self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
+      }
+      if count < 2 {
+        print("wifi status updating...")
+        if isInternetAvailable()
+        {
+          print("notification removed: wifi connected")
+          center.removeAllPendingNotificationRequests()
+        }
+      }
+    } else {
+      //timer?.invalidate()
+      locationManager.stopUpdatingLocation()
+      print("timer hit 0")
     }
+  }
+  func printThis(message: String)
+  {
+    print(message)
   }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -164,5 +199,8 @@ extension AppDelegate: CLLocationManagerDelegate {
     if region is CLCircularRegion {
       handleEventExit(forRegion: region)
     }
+  }
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    print(error)
   }
 }
