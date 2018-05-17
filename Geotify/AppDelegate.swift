@@ -38,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   @objc func appMovedToBackground() {
-    //locationManager.stopUpdatingLocation()
+    locationManager.stopUpdatingLocation()
     //self.timer?.invalidate()
     print("App moved to background!")
   }
@@ -151,7 +151,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   @objc func updateNotificationLong()
   {
-    
+    print("notification time: stoped updating location")
+    locationManager.stopUpdatingLocation()
   }
   func printThis(message: String)
   {
