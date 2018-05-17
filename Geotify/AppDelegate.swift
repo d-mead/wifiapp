@@ -13,6 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   let locationManager = CLLocationManager()
   var counter = 0
   var timer: Timer? = nil
+  var timerLong: Timer? = nil
   var selectedTime: Int = 0
   var curRegion: CLRegion = CLRegion()
   var left = false
@@ -30,9 +31,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     locationManager.allowsBackgroundLocationUpdates = true
     locationManager.startUpdatingLocation()
     //locationManager.stopUpdatingLocation()
-    self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
+    //self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
+    let notificationCenter = NotificationCenter.default
+    notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
     return true
-    
+  }
+  
+  @objc func appMovedToBackground() {
+    //locationManager.stopUpdatingLocation()
+    //self.timer?.invalidate()
+    print("App moved to background!")
   }
   
   func setTime(selectedTime: Int)
@@ -46,7 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func handleEventEnter(forRegion region: CLRegion!) {
     print("marker location entered")
     if !isInternetAvailable() {
-      
       print("the internet is not connected")
       let geotification = geo(fromRegion: region)
       if geotification != nil {
@@ -59,10 +66,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("on: " + String(describing: on))
         if on! {
           count = time!*6
+          locationManager.startUpdatingLocation()
           DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
+            self.timerLong = Timer.scheduledTimer(timeInterval: TimeInterval(self.count*10), target: self, selector: #selector(AppDelegate.updateNotificationLong), userInfo: nil, repeats: true)
           }
-          locationManager.startUpdatingLocation()
+          //locationManager.startUpdatingLocation()
           let content = UNMutableNotificationContent()
           content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
           content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
@@ -84,9 +93,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print("internet was avalable")
     }
   }
-  
+
   //if the user exits the location
   func handleEventExit(forRegion region: CLRegion!) { //removes the pending notification if you leave the area
+    //locationManager.stopUpdatingLocation()
     print("marker location left")
     guard let identif = note(fromRegionIdentifier: region.identifier) else { return } //gets the name of the marker
     let identifArray = [identif]
@@ -112,19 +122,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       DispatchQueue.main.async {
         //self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
       }
+      if count == 1 {
+        print("wifi status updating...1")
+        self.timer?.invalidate()
+      }
       if count < 2 {
         print("wifi status updating...")
         if isInternetAvailable()
         {
           print("notification removed: wifi connected")
           center.removeAllPendingNotificationRequests()
+          //timer?.invalidate()
         }
       }
     } else {
-      //timer?.invalidate()
-      locationManager.stopUpdatingLocation()
+      
+      //locationManager.stopUpdatingLocation()
       print("timer hit 0")
     }
+  }
+  
+  
+  func underOne() {
+    print("wifi status updating...1")
+    self.timer?.invalidate()
+    locationManager.stopUpdatingLocation()
+  }
+  
+  @objc func updateNotificationLong()
+  {
+    
   }
   func printThis(message: String)
   {
@@ -140,12 +167,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func geo(fromRegion: CLRegion) -> Geotification? {
     let savedItems = UserDefaults.standard.array(forKey: PreferencesKeys.savedItems) as? [NSData]
     let geotifications = savedItems?.map { NSKeyedUnarchiver.unarchiveObject(with: $0 as Data) as? Geotification }
-    /*for geo in geotifications! {
-      if CLCircularRegion(center: (geo?.coordinate)!, radius: (geo?.radius)!, identifier: (geo?.identifier)!).contains((locationManager.location?.coordinate)!) {
-        return geo
-      }
-    }
-    return nil*/
     let index = geotifications?.index { $0?.identifier == fromRegion.identifier }
     return index != nil ? geotifications?[index!] : nil
 
