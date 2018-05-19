@@ -30,7 +30,7 @@ struct GeoKey {
   static let longitude = "longitude"
   static let radius = "radius"
   static let identifier = "identifier"
-  static let name = "name"
+  static let name = "Name"
   static let loc = "loc"
   static let delay = "delay"
   static let on = "on"

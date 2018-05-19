@@ -38,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   @objc func appMovedToBackground() {
-    locationManager.stopUpdatingLocation()
+    //locationManager.stopUpdatingLocation()
     //self.timer?.invalidate()
     print("App moved to background!")
   }
@@ -57,6 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print("the internet is not connected")
       let geotification = geo(fromRegion: region)
       if geotification != nil {
+        //Timer.scheduledTimer(timeInterval: 9.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
         let identif = geotification?.name
         print("name: " + identif!)
         let time = geotification?.delay
@@ -64,13 +65,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let on = geotification?.on
         print("on: " + String(describing: on))
         if on! {
-          count = time!*6
-          locationManager.startUpdatingLocation()
+          //count = time!*6
+          //locationManager.startUpdatingLocation()
           DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
-            self.timerLong = Timer.scheduledTimer(timeInterval: TimeInterval(self.count*10), target: self, selector: #selector(AppDelegate.updateNotificationLong), userInfo: nil, repeats: false)
+            self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
+            //self.timerLong = Timer.scheduledTimer(timeInterval: TimeInterval(self.count*10), target: self, selector: #selector(AppDelegate.updateNotificationLong), userInfo: nil, repeats: false)
           }
-          locationManager.startUpdatingLocation()
+          //locationManager.startUpdatingLocation()
           let content = UNMutableNotificationContent()
           content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
           content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
@@ -111,7 +112,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   func update()
   {
-    print("arrived")
+    print("checking wifi status")
+    if isInternetAvailable()
+    {
+      print("notification removed: wifi connected")
+      center.removeAllPendingNotificationRequests()
+      timer?.invalidate()
+    }
+    /*print("arrived")
     if count > 0 {
       
       printThis(message: "wifi status updating over 2")
@@ -119,6 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print(String(count))
       locationManager.requestLocation()
       DispatchQueue.main.async {
+        self.locationManager.startUpdatingLocation()
         //self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
       }
       if count == 1 {
@@ -138,21 +147,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       
       //locationManager.stopUpdatingLocation()
       print("timer hit 0")
-    }
+    }*/
   }
   
   
   func underOne() {
     print("wifi status updating...1")
     self.timer?.invalidate()
-    locationManager.stopUpdatingLocation()
+    //locationManager.stopUpdatingLocation()
   }
   
   @objc func updateNotificationLong()
   {
     print("notification time: stoped updating location")
-    locationManager.stopUpdatingLocation()
-    self.timerLong?.invalidate()
+    //locationManager.stopUpdatingLocation()
+    self.timerLong?.invalidate() //
   }
   func printThis(message: String)
   {
