@@ -28,6 +28,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   var pickerData: [Int] = [Int]()
   @IBOutlet var onOffSwitch: UISwitch!
   @IBOutlet var deleteButton: UIBarButtonItem!
+  @IBOutlet var mapSwitch: UISegmentedControl!
+  
     
   var delegate: EditMarkerViewControllerDelegate?
   
@@ -60,6 +62,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     delayPicker.selectRow(pickerData.index(of: (geo?.delay)!)!, inComponent: 0, animated: true)
     onOffSwitch.isOn = (geo?.on)!
     selectedTime = (geo?.delay)!
+    addRadiusOverlay()
   }
   
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -105,6 +108,19 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   @IBAction func onCancel(sender: AnyObject) {
     dismiss(animated: true, completion: nil)
   }
+  @IBAction func switchChanged(_ sender: Any) {
+    switch mapSwitch.selectedSegmentIndex
+    {
+    case 0:
+      mapView.mapType = .standard
+    case 1:
+      mapView.mapType = .hybrid
+    case 2:
+      mapView.mapType = .satellite
+    default:
+      mapView.mapType = .standard
+    }
+  }
   
     @IBAction func onDelete(_ sender: Any) {
       let coordinate = mapView.centerCoordinate
@@ -144,6 +160,16 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     }
   }
   
+  func addRadiusOverlay() {
+    mapView?.add(MKCircle(center: mapView.centerCoordinate, radius: Double(radiusTextField.text!) ?? 0))
+  }
+  
+  func removeRadiusOverlay() {
+    // Find exactly one overlay which has the same coordinates & radius to remove
+    let overlays = mapView.overlays
+    mapView.removeOverlays(overlays)
+  }
+  
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
     mapView.zoomToUserLocation()
   }
@@ -152,10 +178,28 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
 
 extension EditMarkerViewController: HandleMapSearch {
   func dropPinZoomIn(placemark:MKPlacemark){
-    let span = MKCoordinateSpanMake(0.05, 0.05)
+    let span = MKCoordinateSpanMake(0.025, 0.025)
     let region = MKCoordinateRegionMake(placemark.coordinate, span)
     mapView.setRegion(region, animated: true)
   }
+}
+extension EditMarkerViewController: MKMapViewDelegate {
+  
+  func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    if overlay is MKCircle {
+      let circleRenderer = MKCircleRenderer(overlay: overlay)
+      circleRenderer.lineWidth = 1.0
+      circleRenderer.strokeColor = .purple
+      circleRenderer.fillColor = UIColor.purple.withAlphaComponent(0.4)
+      return circleRenderer
+    }
+      return MKOverlayRenderer(overlay: overlay)
+    }
+    func mapView(_: MKMapView, regionDidChangeAnimated: Bool) {
+      print("changed")
+      removeRadiusOverlay()
+      addRadiusOverlay()
+    }
 }
 
 

@@ -52,7 +52,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   var timer2 = Timer()
   let delay = 0.5
   var count = 0
-
+  @IBOutlet var mapSwitch: UISegmentedControl!
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -83,6 +84,20 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     zoomAnnotationsOnMapView()
     showTable()
     
+  }
+  
+  @IBAction func mapChanged(_ sender: Any) {
+    switch mapSwitch.selectedSegmentIndex
+    {
+    case 0:
+      mapView.mapType = .standard
+    case 1:
+      mapView.mapType = .hybrid
+    case 2:
+      mapView.mapType = .satellite
+    default:
+      mapView.mapType = .standard
+    }
   }
   
   func zoomAnnotationsOnMapView()
@@ -210,6 +225,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     
     if editingStyle == .delete {
       print("begining delete")
+      removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
       remove(geotification: geotifications[indexPath.row])
       //removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
       //geoTable.deleteRows(at: [indexPath], with: .fade)
@@ -533,19 +549,5 @@ extension MarkerViewController: MKMapViewDelegate {
   
 }
 
-extension CLLocation {
-  
-  /// Get distance between two points
-  ///
-  /// - Parameters:
-  ///   - from: first point
-  ///   - to: second point
-  /// - Returns: the distance in meters
-  class func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> CLLocationDistance {
-    let from = CLLocation(latitude: from.latitude, longitude: from.longitude)
-    let to = CLLocation(latitude: to.latitude, longitude: to.longitude)
-    return from.distance(from: to)
-  }
-}
 
 

@@ -27,12 +27,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
     }
     print("testing")
-    //Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
-    locationManager.allowsBackgroundLocationUpdates = true
-    locationManager.startUpdatingLocation()
-    //locationManager.stopUpdatingLocation()
-    //self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: true)
-    let notificationCenter = NotificationCenter.default
+    locationManager.allowsBackgroundLocationUpdates = true //allows the app to be continuously updating through continuous location tracking
+    locationManager.startUpdatingLocation() //begins updating the user location
+    let notificationCenter = NotificationCenter.default //sets up/instantiate the notification center
     notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
     return true
   }
@@ -53,43 +50,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   //if the user enters the location
   func handleEventEnter(forRegion region: CLRegion!) {
     print("marker location entered")
-    if !isInternetAvailable() {
+    if !isInternetAvailable() { //if internet is not avalable at the time
       print("the internet is not connected")
-      let geotification = geo(fromRegion: region)
-      if geotification != nil {
+      let geotification = geo(fromRegion: region) //geotification is the geotification that was notified
+      if geotification != nil { //if the geotification just found is not null
         //Timer.scheduledTimer(timeInterval: 9.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
-        let identif = geotification?.name
-        print("name: " + identif!)
-        let time = geotification?.delay
-        print("delay: " + String(describing: time))
-        let on = geotification?.on
-        print("on: " + String(describing: on))
-        if on! {
+        let identif = geotification?.name             ///////
+        print("name: " + identif!)                    //
+        let time = geotification?.delay               //this portion extracts the data from the found geotification
+        print("delay: " + String(describing: time))   //
+        let on = geotification?.on                    //
+        print("on: " + String(describing: on))        ///////
+        if on! { //if the geotificaion is set to on
           //count = time!*6
           //locationManager.startUpdatingLocation()
           DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
+            self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60-5), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false) //sets a timer to update the state of the notification 5 seconds before sending
             //self.timerLong = Timer.scheduledTimer(timeInterval: TimeInterval(self.count*10), target: self, selector: #selector(AppDelegate.updateNotificationLong), userInfo: nil, repeats: false)
           }
           //locationManager.startUpdatingLocation()
           let content = UNMutableNotificationContent()
-          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)
+          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil) //body content of the notifcation
           content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
-          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+1)), repeats: false)
+          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+1)), repeats: false) //creates the notification and sets when it will be sent
 
-          let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)
-          center.add(request) { (error : Error?) in
+          let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger) //creates the request
+          center.add(request) { (error : Error?) in //adds the request for the notification to be sent
             if let theError = error {
               print(theError.localizedDescription)
             }
             print("notification scheduled")
           }
         }
-        else {
+        else { //if the geotification was not set to on
           print("marker is turned off")
         }
       }
-    } else {
+    } else { //if internet was avalable
       print("internet was avalable")
     }
   }

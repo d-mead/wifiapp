@@ -25,6 +25,8 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   @IBOutlet var delayPicker: UIPickerView!
   var pickerData: [Int] = [Int]()
   @IBOutlet var onOffSwitch: UISwitch!
+  @IBOutlet var mapSwitch: UISegmentedControl!
+  
   
   var delegate: AddMarkerViewControllerDelegate?
 
@@ -69,7 +71,6 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     //addButton.setTitleTextAttributes([ NSAttributedStringKey.font: UIFont(name: "SFProDisplay-Regular", size: 22)!], for: UIControlState.normal)
     //navigationItem.titleView.labe
     //font = UIFont(name: "SFProDisplay-Regular", size: 17)
-    
   }
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -132,8 +133,25 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   @IBAction func onCancel(sender: AnyObject) {
     dismiss(animated: true, completion: nil)
   }
-
-  @IBAction private func onAdd(sender: AnyObject) {
+    //MAP CHNAGED:
+    @IBAction func mapChanged(_ sender: Any) {
+      print("got here")
+        switch mapSwitch.selectedSegmentIndex
+        {
+        case 0:
+            mapView.mapType = .standard
+        case 1:
+            mapView.mapType = .hybrid
+        case 2:
+            mapView.mapType = .satellite
+        default:
+            mapView.mapType = .standard
+        }
+    }
+    
+    
+    
+    @IBAction private func onAdd(sender: AnyObject) {
     let coordinate = mapView.centerCoordinate
     let radius = Double(radiusTextField.text!) ?? 0
     let identifier = NSUUID().uuidString
