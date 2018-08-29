@@ -116,48 +116,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       center.removeAllPendingNotificationRequests()
       timer?.invalidate()
     }
-    /*print("arrived")
-    if count > 0 {
-      
-      printThis(message: "wifi status updating over 2")
-      count = count - 1
-      print(String(count))
-      locationManager.requestLocation()
-      DispatchQueue.main.async {
-        self.locationManager.startUpdatingLocation()
-        //self.timer = Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)
-      }
-      if count == 1 {
-        print("wifi status updating...1")
-        self.timer?.invalidate()
-      }
-      if count < 2 {
-        print("wifi status updating...")
-        if isInternetAvailable()
-        {
-          print("notification removed: wifi connected")
-          center.removeAllPendingNotificationRequests()
-          //timer?.invalidate()
-        }
-      }
-    } else {
-      
-      //locationManager.stopUpdatingLocation()
-      print("timer hit 0")
-    }*/
+    
   }
   
   
   func underOne() {
     print("wifi status updating...1")
     self.timer?.invalidate()
-    //locationManager.stopUpdatingLocation()
   }
   
   @objc func updateNotificationLong()
   {
     print("notification time: stoped updating location")
-    //locationManager.stopUpdatingLocation()
     self.timerLong?.invalidate() //
   }
   func printThis(message: String)

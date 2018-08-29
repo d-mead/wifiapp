@@ -10,7 +10,7 @@ protocol AddMarkerViewControllerDelegate {
 }
 
 
-class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, MKMapViewDelegate {
   
   @IBOutlet var addButton: UIBarButtonItem!
   @IBOutlet var zoomButton: UIBarButtonItem!
@@ -19,6 +19,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   @IBOutlet weak var nameTextField: UITextField!
   @IBOutlet weak var mapView: MKMapView!
   var selectedPin:MKPlacemark? = nil
+  var reg:MKCoordinateRegion? = nil
   var resultSearchController:UISearchController? = nil
   var selectedTime: Int = 0
   var geoNames: [String] = []
@@ -32,14 +33,8 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    //let addButt = UIButton(frame: CGRect(x: 0, y: 0, width: 34, height: 15))
-      //  addButt.setTitle("1add", for: .normal)
-        //addButt.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-    
-    //let zoomButt = UIButton(frame: CGRect(x: 0, y: 0, width: 34, height: 15))
-        //zoomButt.setImage(#imageLiteral(resourceName: "CurrentLocation"), for: .normal)
-    //navigationItem.rightBarButtonItem =  UIBarButtonItem(customView: addButt)
-    //navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: addButt), UIBarButtonItem(customView: zoomButt)]
+    mapView.setRegion(reg!, animated: false)
+    mapView.delegate = self
     UINavigationBar.appearance().titleTextAttributes = [
       NSAttributedStringKey.font: UIFont.systemFont(ofSize: 22)
     ]
@@ -68,14 +63,14 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     pickerData = [0, 1, 5, 10, 15, 20, 25, 30]
     self.delayPicker.delegate = self
     self.delayPicker.dataSource = self
-    //addButton.setTitleTextAttributes([ NSAttributedStringKey.font: UIFont(name: "SFProDisplay-Regular", size: 22)!], for: UIControlState.normal)
-    //navigationItem.titleView.labe
-    //font = UIFont(name: "SFProDisplay-Regular", size: 17)
+    addRadiusOverlay()
+//    let circle = MKCircle(center: mapView.centerCoordinate, radius: 1000000/*Double(radiusTextField.text!)!*/)
+//    mapView.add(circle)
   }
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
-    
+  
     // The number of rows of data
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return pickerData.count
@@ -109,25 +104,25 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
       return pickerLabel!;
     }
   
-  func addRadiusOverlay(forGeotification geotification: Geotification) {
-    mapView?.add(MKCircle(center: geotification.coordinate, radius: geotification.radius))
+  //MARK: Overlay
+  func addRadiusOverlay() {
+    if(radiusTextField.text != nil) {
+      mapView?.add(MKCircle(center: mapView.centerCoordinate, radius: Double(radiusTextField.text!)!))
+    }
   }
   
-  func removeRadiusOverlay(forGeotification geotification: Geotification) {
+  func removeRadiusOverlay() {
     // Find exactly one overlay which has the same coordinates & radius to remove
     guard let overlays = mapView?.overlays else { return }
     for overlay in overlays {
-      guard let circleOverlay = overlay as? MKCircle else { continue }
-      let coord = circleOverlay.coordinate
-      if coord.latitude == geotification.coordinate.latitude && coord.longitude == geotification.coordinate.longitude && circleOverlay.radius == geotification.radius {
-        mapView?.remove(circleOverlay)
-        break
-      }
+      mapView?.remove(overlay)
     }
   }
 //
   @IBAction func textFieldEditingChanged(sender: UITextField) {
     addButton.isEnabled = !radiusTextField.text!.isEmpty && !noteTextField.text!.isEmpty
+    removeRadiusOverlay()
+    addRadiusOverlay()
   }
 //
   @IBAction func onCancel(sender: AnyObject) {
@@ -171,6 +166,23 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
     mapView.zoomToUserLocation()
   }
+  func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+    removeRadiusOverlay()
+    addRadiusOverlay()
+  }
+  
+  func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    if let overlay = overlay as? MKCircle {
+      let circleRenderer = MKCircleRenderer(circle: overlay)
+      circleRenderer.lineWidth = 1.0
+      circleRenderer.strokeColor = .blue
+      circleRenderer.fillColor = UIColor.blue.withAlphaComponent(0.4)
+      return circleRenderer
+    }
+    else {
+      return MKOverlayRenderer(overlay: overlay)
+    }
+  }
   
 }
 
@@ -181,6 +193,24 @@ extension AddMarkerViewController: HandleMapSearch {
     mapView.setRegion(region, animated: true)
   }
 }
+
+//extension AddMarkerViewController: MKMapViewDelegate {
+//  func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+//    if overlay is MKCircle {
+//      let circleRenderer = MKCircleRenderer(overlay: overlay)
+//      circleRenderer.lineWidth = 1.0
+//      circleRenderer.strokeColor = .blue
+//      circleRenderer.fillColor = UIColor.blue.withAlphaComponent(0.4)
+//      print("hello")
+//      return circleRenderer
+//    }
+//    return MKOverlayRenderer(overlay: overlay)
+//  }
+//  func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
+//    addRadiusOverlay()
+//  }
+//
+//}
 
 
 

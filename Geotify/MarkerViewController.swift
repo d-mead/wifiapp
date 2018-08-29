@@ -153,6 +153,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       let navigationController = segue.destination as! UINavigationController
       let vc = navigationController.viewControllers.first as! AddMarkerViewController
       vc.geoNames = geoNames
+      let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
+      vc.reg = region
       vc.delegate = self
     }
     else if segue.identifier == "toEdit" {
@@ -459,9 +461,6 @@ extension MarkerViewController: MKMapViewDelegate {
       if annotationView == nil {
         annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
         annotationView?.canShowCallout = true
-        //let removeButton = UIButton(type: .custom)
-        //removeButton.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-        //removeButton.setImage(UIImage(named: "DeleteGeotification")!, for: .normal)
         let editButton = UIButton(type: .custom)
         editButton.frame = CGRect(x: 0, y: 0, width: 36, height: 23)
         editButton.setTitle("Edit", for: .normal)
@@ -480,8 +479,8 @@ extension MarkerViewController: MKMapViewDelegate {
     if overlay is MKCircle {
       let circleRenderer = MKCircleRenderer(overlay: overlay)
       circleRenderer.lineWidth = 1.0
-      circleRenderer.strokeColor = .purple
-      circleRenderer.fillColor = UIColor.purple.withAlphaComponent(0.4)
+      circleRenderer.strokeColor = .blue
+      circleRenderer.fillColor = UIColor.blue.withAlphaComponent(0.4)
       return circleRenderer
     }
     return MKOverlayRenderer(overlay: overlay)
@@ -521,7 +520,7 @@ extension MarkerViewController: MKMapViewDelegate {
     }
   }
   
-  func mapView(_: MKMapView, regionDidChangeAnimated: Bool) {
+  func mapView(_: MKMapView, regionWillChangeAnimated: Bool) {
     hideTable()
   }
 
