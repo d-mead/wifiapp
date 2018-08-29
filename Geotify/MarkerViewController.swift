@@ -165,6 +165,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       var tempNames = geoNames
       tempNames.index(of: (editingGeo?.name)!).map { tempNames.remove(at: $0) }
       vc.geoNames = tempNames
+      let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
+      vc.reg = region
       vc.delegate = self
     }
   }
@@ -479,8 +481,20 @@ extension MarkerViewController: MKMapViewDelegate {
     if overlay is MKCircle {
       let circleRenderer = MKCircleRenderer(overlay: overlay)
       circleRenderer.lineWidth = 1.0
-      circleRenderer.strokeColor = .blue
-      circleRenderer.fillColor = UIColor.blue.withAlphaComponent(0.4)
+      let color = UIColor(
+        red: 3.0/255.0,
+        green: 195.0/255.0,
+        blue: 119.0/255.0,
+        alpha: CGFloat(1.0)
+      )
+      let colorLight = UIColor(
+        red: 3.0/255.0,
+        green: 195.0/255.0,
+        blue: 119.0/255.0,
+        alpha: CGFloat(0.4)
+      )
+      circleRenderer.strokeColor = color
+      circleRenderer.fillColor = colorLight
       return circleRenderer
     }
     return MKOverlayRenderer(overlay: overlay)

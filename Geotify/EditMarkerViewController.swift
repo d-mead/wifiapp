@@ -9,7 +9,7 @@ protocol EditMarkerViewControllerDelegate {
 }
 
 
-class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, MKMapViewDelegate  {
   
   
   
@@ -23,6 +23,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   var resultSearchController:UISearchController? = nil
   var selectedTime: Int = 0
   var geo: Geotification? = nil
+  var reg:MKCoordinateRegion? = nil
   var geoNames: [String] = []
   @IBOutlet var delayPicker: UIPickerView!
   var pickerData: [Int] = [Int]()
@@ -35,6 +36,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    mapView.delegate = self
+    mapView.setRegion(reg!, animated: false)
     navigationItem.rightBarButtonItems = [addButton, deleteButton]
     let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
     resultSearchController = UISearchController(searchResultsController: locationSearchTable)
@@ -103,6 +106,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   //
   @IBAction func textFieldEditingChanged(sender: UITextField) {
     addButton.isEnabled = !radiusTextField.text!.isEmpty && !noteTextField.text!.isEmpty
+    removeRadiusOverlay()
+    addRadiusOverlay()
   }
   //
   @IBAction func onCancel(sender: AnyObject) {
@@ -139,9 +144,19 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
       }
     }
   
-    func addRadiusOverlay(forGeotification geotification: Geotification) {
-      mapView?.add(MKCircle(center: geotification.coordinate, radius: geotification.radius))
+  func addRadiusOverlay() {
+    if(radiusTextField.text != "") {
+      mapView?.add(MKCircle(center: mapView.centerCoordinate, radius: Double(radiusTextField.text!)!))
     }
+  }
+  
+  func removeRadiusOverlay() {
+    // Find exactly one overlay which has the same coordinates & radius to remove
+    guard let overlays = mapView?.overlays else { return }
+    for overlay in overlays {
+      mapView?.remove(overlay)
+    }
+  }
   
     @IBAction private func onAdd(sender: AnyObject) {
     let coordinate = mapView.centerCoordinate
@@ -160,18 +175,38 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     }
   }
   
-  func addRadiusOverlay() {
-    mapView?.add(MKCircle(center: mapView.centerCoordinate, radius: Double(radiusTextField.text!) ?? 0))
-  }
-  
-  func removeRadiusOverlay() {
-    // Find exactly one overlay which has the same coordinates & radius to remove
-    let overlays = mapView.overlays
-    mapView.removeOverlays(overlays)
-  }
-  
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
     mapView.zoomToUserLocation()
+  }
+  
+  func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    if let overlay = overlay as? MKCircle {
+      let circleRenderer = MKCircleRenderer(circle: overlay)
+      circleRenderer.lineWidth = 1.0
+      let color = UIColor(
+        red: 3.0/255.0,
+        green: 195.0/255.0,
+        blue: 119.0/255.0,
+        alpha: CGFloat(1.0)
+      )
+      let colorLight = UIColor(
+        red: 3.0/255.0,
+        green: 195.0/255.0,
+        blue: 119.0/255.0,
+        alpha: CGFloat(0.4)
+      )
+      circleRenderer.strokeColor = color
+      circleRenderer.fillColor = colorLight
+      return circleRenderer
+    }
+    else {
+      return MKOverlayRenderer(overlay: overlay)
+    }
+  }
+  
+  func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+    removeRadiusOverlay()
+    addRadiusOverlay()
   }
   
 }
@@ -182,24 +217,6 @@ extension EditMarkerViewController: HandleMapSearch {
     let region = MKCoordinateRegionMake(placemark.coordinate, span)
     mapView.setRegion(region, animated: true)
   }
-}
-extension EditMarkerViewController: MKMapViewDelegate {
-  
-  func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-    if overlay is MKCircle {
-      let circleRenderer = MKCircleRenderer(overlay: overlay)
-      circleRenderer.lineWidth = 1.0
-      circleRenderer.strokeColor = .purple
-      circleRenderer.fillColor = UIColor.purple.withAlphaComponent(0.4)
-      return circleRenderer
-    }
-      return MKOverlayRenderer(overlay: overlay)
-    }
-    func mapView(_: MKMapView, regionDidChangeAnimated: Bool) {
-      print("changed")
-      removeRadiusOverlay()
-      addRadiusOverlay()
-    }
 }
 
 

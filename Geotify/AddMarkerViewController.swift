@@ -64,8 +64,6 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     self.delayPicker.delegate = self
     self.delayPicker.dataSource = self
     addRadiusOverlay()
-//    let circle = MKCircle(center: mapView.centerCoordinate, radius: 1000000/*Double(radiusTextField.text!)!*/)
-//    mapView.add(circle)
   }
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -106,7 +104,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   
   //MARK: Overlay
   func addRadiusOverlay() {
-    if(radiusTextField.text != nil) {
+    if(radiusTextField.text != "") {
       mapView?.add(MKCircle(center: mapView.centerCoordinate, radius: Double(radiusTextField.text!)!))
     }
   }
@@ -175,8 +173,20 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     if let overlay = overlay as? MKCircle {
       let circleRenderer = MKCircleRenderer(circle: overlay)
       circleRenderer.lineWidth = 1.0
-      circleRenderer.strokeColor = .blue
-      circleRenderer.fillColor = UIColor.blue.withAlphaComponent(0.4)
+      let color = UIColor(
+        red: 3.0/255.0,
+        green: 195.0/255.0,
+        blue: 119.0/255.0,
+        alpha: CGFloat(1.0)
+      )
+      let colorLight = UIColor(
+        red: 3.0/255.0,
+        green: 195.0/255.0,
+        blue: 119.0/255.0,
+        alpha: CGFloat(0.4)
+      )
+      circleRenderer.strokeColor = color
+      circleRenderer.fillColor = colorLight
       return circleRenderer
     }
     else {
