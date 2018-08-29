@@ -85,7 +85,6 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
         } else {
             selectedTime = pickerData[row]
         }
-        //appDelegate?.setTime(selectedTime: selectedTime)
         print(selectedTime)
     }
     
