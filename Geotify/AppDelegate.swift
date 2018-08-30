@@ -13,11 +13,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   let locationManager = CLLocationManager()
   var counter = 0
   var timer: Timer? = nil
+  var timerL: Timer? = nil
   var timerLong: Timer? = nil
   var selectedTime: Int = 0
   var curRegion: CLRegion = CLRegion()
   var left = false
-  var center = UNUserNotificationCenter.current()
+  var center = UNUserNotificationCenter .current()
   var count = 0
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
@@ -36,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   @objc func appMovedToBackground() {
     locationManager.allowsBackgroundLocationUpdates = false
     locationManager.pausesLocationUpdatesAutomatically = true//****//
-    //locationManager.stopUpdatingLocation()          //****//
+    locationManager.stopUpdatingLocation()          //****//
     print("App moved to background!")
   }
   
@@ -69,16 +70,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let identif = geotification?.name             ///////
         print("name: " + identif!)                    //
         let time = geotification?.delay               //this portion extracts the data from the found geotification
-        print("delay: " + String(describing: time))   //
+        print("delay: " + String(describing: time!))   //
         let on = geotification?.on                    //
         print("on: " + String(describing: on))        ///////
         if on! {                                      //if the geotificaion is set to on
           DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60-5), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)                  //sets a timer to update the state of the notification 5 seconds before sending
+            self.timerL = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60+10), target: self, selector: #selector(AppDelegate.endLocationUpdates), userInfo: nil, repeats: false) //sets timer for the function that will stop the location updates
           }
           let content = UNMutableNotificationContent()
-          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi", arguments: nil)       //body content of the notifcation
-          content.body = NSString.localizedUserNotificationString(forKey: identif!, arguments: nil)
+          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi connection", arguments: nil)       //body content of the notifcation
+          content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + "minutes and are still not connected to wifi"), arguments: nil)
           let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+1)), repeats: false)  //creates the notification and sets when it will be sent
           let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)              //creates the request
           center.add(request) { (error : Error?) in   //adds the request for the notification to be sent
@@ -105,8 +107,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
     //locationManager.stopUpdatingLocation()          //****//
-    locationManager.allowsBackgroundLocationUpdates = false
+    //locationManager.allowsBackgroundLocationUpdates = false
     print("removed pending notification")
+  }
+  
+  @objc func endLocationUpdates()
+  {
+    locationManager.stopUpdatingLocation()
   }
   
   //deletes the notification just before being sent if wifi is connected
@@ -122,7 +129,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     {
       print("notification removed: wifi connected")
       center.removeAllPendingNotificationRequests()
-      timer?.invalidate()
     }
     //locationManager.stopUpdatingLocation()          //****//
     

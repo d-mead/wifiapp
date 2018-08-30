@@ -149,6 +149,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     let identifier = NSUUID().uuidString
     let note = noteTextField.text
     let delay = selectedTime
+      
     let on = onOffSwitch.isOn
     if geoNames.contains(note!) {
       let alert = UIAlertController(title: "Name Already in Use", message: "Choose another name", preferredStyle: UIAlertControllerStyle.alert)
@@ -161,7 +162,8 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   }
 
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
-    mapView.zoomToUserLocation()
+    let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, 50, 50)
+    mapView.setRegion(viewRegion, animated: true)
   }
   func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
     removeRadiusOverlay()

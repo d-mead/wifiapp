@@ -176,7 +176,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   }
   
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
-    mapView.zoomToUserLocation()
+    let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, 50, 50)
+    mapView.setRegion(viewRegion, animated: true)
   }
   
   func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

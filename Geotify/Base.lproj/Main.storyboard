@@ -61,16 +61,17 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MuC-rK-fvO">
                                 <rect key="frame" x="0.0" y="685" width="375" height="44"/>
                                 <items>
-                                    <barButtonItem title="Status: Unknown" id="E8e-sJ-QLa">
-                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                        <connections>
-                                            <action selector="statusTapped:" destination="LYI-dq-R4y" id="Tfr-Li-Vhk"/>
-                                        </connections>
-                                    </barButtonItem>
+                                    <barButtonItem title="1 Active Markers" id="JAO-au-SJj"/>
                                     <barButtonItem title=" " width="207" id="nyD-Tc-crq">
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
                                             <action selector="tapped:" destination="LYI-dq-R4y" id="UiH-bV-2zt"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="Hide" id="E8e-sJ-QLa">
+                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <action selector="statusTapped:" destination="LYI-dq-R4y" id="Tfr-Li-Vhk"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -122,6 +123,7 @@
                             </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="MuC-rK-fvO" firstAttribute="top" secondItem="fP9-ox-VWa" secondAttribute="bottom" id="0Md-O5-FQX"/>
                             <constraint firstItem="MuC-rK-fvO" firstAttribute="top" secondItem="bnj-0Z-QB6" secondAttribute="bottom" id="1lq-qE-MkW"/>
@@ -136,9 +138,12 @@
                             <constraint firstItem="fP9-ox-VWa" firstAttribute="leading" secondItem="YSL-HX-BG1" secondAttribute="leading" id="xPh-Rv-5RX"/>
                             <constraint firstItem="xlA-EU-Vo6" firstAttribute="top" secondItem="kGy-dK-Sza" secondAttribute="bottom" constant="10" id="yXj-VO-Cur"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="kXL-ZE-xn5" appends="YES" id="22s-4a-aQS"/>
+                        </connections>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Markers (0)" largeTitleDisplayMode="always" id="dS8-nZ-3oV">
+                    <navigationItem key="navigationItem" title="WifiApp" largeTitleDisplayMode="always" id="dS8-nZ-3oV">
                         <barButtonItem key="leftBarButtonItem" image="CurrentLocation" id="8XV-mR-Zic">
                             <connections>
                                 <action selector="zoomToCurrentLocation:" destination="LYI-dq-R4y" id="CML-vi-1z9"/>
@@ -152,6 +157,7 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="activeCounter" destination="JAO-au-SJj" id="0Nk-58-P2x"/>
                         <outlet property="geoTable" destination="bnj-0Z-QB6" id="RGu-en-HuE"/>
                         <outlet property="mapSwitch" destination="xlA-EU-Vo6" id="Wu6-Wk-xWu"/>
                         <outlet property="mapView" destination="fP9-ox-VWa" id="Be5-Fa-6so"/>
@@ -160,6 +166,9 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="81v-DC-JL1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <screenEdgePanGestureRecognizer minimumNumberOfTouches="1" id="kXL-ZE-xn5">
+                    <rectEdge key="edges" bottom="YES"/>
+                </screenEdgePanGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-138.40000000000001" y="503.29835082458777"/>
         </scene>
@@ -356,7 +365,7 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="100" placeholder="Radius in meters" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JCu-BO-y8b">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="50" placeholder="Radius in meters" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JCu-BO-y8b">
                                                     <rect key="frame" x="161" y="12" width="178" height="21"/>
                                                     <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>

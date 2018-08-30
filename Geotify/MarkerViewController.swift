@@ -11,7 +11,7 @@
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -36,6 +36,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   
   @IBOutlet weak var mapView: MKMapView!
   
+  
+  @IBOutlet var activeCounter: UIBarButtonItem!
   var geotifications: [Geotification] = []
   var geoNames: [String] = []
   var geoAddress: [String] = []
@@ -70,11 +72,6 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       geo.makeLoc()
     }
     
-    if isInternetAvailable() {
-      statusButton.title = "Status: Connected"
-    } else {
-      statusButton.title = "Status: Disconnected"
-    }
     geoTable.delegate = self
     geoTable.dataSource = self
     geoTable.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -196,13 +193,13 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     }
   }*/
   
-  @objc func checkConnection() {
-    if isInternetAvailable() {
-      statusButton.title = "Status: Connected"
-    } else {
-      statusButton.title = "Status: Disconnected"
-    }
-  }
+//  @objc func checkConnection() {
+//    if isInternetAvailable() {
+//      statusButton.title = "Status: Connected"
+//    } else {
+//      statusButton.title = "Status: Disconnected"
+//    }
+//  }
   
   
   // Mark: desiging the cell
@@ -256,9 +253,15 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   
   @IBAction func statusTapped(_ sender: Any) {
     showHideTable()
+    if(statusButton.title == "Hide"){
+        statusButton.title = "Show"
+    }
+    else {
+      statusButton.title = "Hide"
+    }
   }
   @IBAction func tapped(_ sender: Any) {
-    showHideTable()
+    //showHideTable()
   }
   
   
@@ -352,7 +355,19 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   }
   
   func updateGeotificationsCount() {
-    title = "Markers (\(geotifications.count))"
+    //title = "Markers (\(geotifications.count))"
+    var count = 0
+    for geo in geotifications {
+      if(geo.on)!{
+          count += 1
+      }
+    }
+    if(count == 1){
+      activeCounter.title = String(describing: count) + " Active Marker"
+    }
+    else {
+      activeCounter.title = String(describing: count) + " Active Markers"
+    }
     navigationItem.rightBarButtonItem?.isEnabled = (geotifications.count < 20)
   }
   
@@ -376,7 +391,10 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   
   // MARK: Other mapview functions
   @IBAction func zoomToCurrentLocation(_ sender: Any) {
-    mapView.zoomToUserLocation()
+    if let userLocation = locationManager.location?.coordinate {
+      let viewRegion = MKCoordinateRegionMakeWithDistance(userLocation, 50, 50)
+      mapView.setRegion(viewRegion, animated: true)
+    }
   }
   
 }
