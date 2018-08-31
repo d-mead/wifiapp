@@ -16,37 +16,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var timerL: Timer? = nil
   var timerLong: Timer? = nil
   var selectedTime: Int = 0
-  var curRegion: CLRegion = CLRegion()
+  var curRegion: CLCircularRegion = CLCircularRegion()
   var left = false
   var center = UNUserNotificationCenter .current()
   var count = 0
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    UIApplication.shared.setMinimumBackgroundFetchInterval(3600)
     locationManager.delegate = self as CLLocationManagerDelegate
     locationManager.requestAlwaysAuthorization()
     center = UNUserNotificationCenter.current()
     center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
     }
     locationManager.allowsBackgroundLocationUpdates = true //allows the app to be continuously updating through continuous location tracking
-    locationManager.startUpdatingLocation() //begins updating the user location
-    let notificationCenter = NotificationCenter.default //sets up/instantiate the notification center
+    locationManager.startUpdatingLocation() //begins updating the user's location
+    let notificationCenter = NotificationCenter.default //sets up/instantiates the notification center
     notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
     return true
   }
   
   @objc func appMovedToBackground() {
     locationManager.allowsBackgroundLocationUpdates = false
-    locationManager.pausesLocationUpdatesAutomatically = true//****//
+    //locationManager.pausesLocationUpdatesAutomatically = true//****//
     locationManager.stopUpdatingLocation()          //****//
     print("App moved to background!")
-  }
+  } //CLCircularRegion(center: loc.center, radius: loc.radius, identifier: loc.identifier).contains((locationManager.location?.coordinate)!)
+  //Background
   
-//  func setTime(selectedTime: Int)
-//  {
-//    print("recieved")
-//    self.selectedTime = selectedTime
-//    print("AppDel: " + String(self.selectedTime))
-//  }
+  
+  func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler:
+      @escaping (UIBackgroundFetchResult) -> Void) { //checks if the user is in a marked location and is not connected to wifi
+    locationManager.requestLocation()
+    print("background refresh")
+    for loc in locationManager.monitoredRegions {
+      if((loc as! CLCircularRegion).contains((locationManager.location?.coordinate)!)) {
+        print("user was inside marker during background refresh")
+        if(!isInternetAvailable()){
+          print("internet not avalable duirng background refresh")
+          let content = UNMutableNotificationContent()
+          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi connection", arguments: nil)       //body content of the notifcation
+          content.body = NSString.localizedUserNotificationString(forKey: ("It appears you are at " + (geo(fromRegion: loc as! CLCircularRegion)?.name)! + " and are not connected to wifi"), arguments: nil)
+          let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(5)), repeats: false)  //creates the notification and sets when it will be sent
+          let request = UNNotificationRequest(identifier: (geo(fromRegion: loc as! CLCircularRegion)?.name)!, content: content, trigger: trigger)              //creates the request
+          center.add(request) { (error : Error?) in   //adds the request for the notification to be sent
+            if let theError = error {
+              print(theError.localizedDescription)
+            }
+            print("notification scheduled")
+          }
+        }
+      }
+    }
+  }
   
 //  if moved into background:
 //    stop updating location
@@ -59,9 +80,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //      stop updating location
   
   //if the user enters the location
-  func handleEventEnter(forRegion region: CLRegion!) {
+  func handleEventEnter(forRegion region: CLCircularRegion!) {
     locationManager.allowsBackgroundLocationUpdates = true
-    locationManager.startUpdatingLocation()         //****//
+    locationManager.startUpdatingLocation()
     print("marker location entered")
     if !isInternetAvailable() {                       //if internet is not avalable at the time
       print("the internet is not connected")
@@ -76,11 +97,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if on! {                                      //if the geotificaion is set to on
           DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60-5), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)                  //sets a timer to update the state of the notification 5 seconds before sending
-            self.timerL = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60+10), target: self, selector: #selector(AppDelegate.endLocationUpdates), userInfo: nil, repeats: false) //sets timer for the function that will stop the location updates
+            //self.timerL = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60+10), target: self, selector: #selector(AppDelegate.endLocationUpdates), userInfo: nil, repeats: false) //sets timer for the function that will stop the location updates
           }
           let content = UNMutableNotificationContent()
           content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi connection", arguments: nil)       //body content of the notifcation
-          content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + "minutes and are still not connected to wifi"), arguments: nil)
+          content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + " minutes and are still not connected to wifi"), arguments: nil)
           let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+1)), repeats: false)  //creates the notification and sets when it will be sent
           let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)              //creates the request
           center.add(request) { (error : Error?) in   //adds the request for the notification to be sent
@@ -100,20 +121,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
 
   //if the user exits the location
-  func handleEventExit(forRegion region: CLRegion!) { //removes the pending notification if you leave the area
+  func handleEventExit(forRegion region: CLCircularRegion!) { //removes the pending notification if you leave the area
     print("marker location left")
     guard let identif = note(fromRegionIdentifier: region.identifier) else { return } //gets the name of the marker
     let identifArray = [identif]
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
-    //locationManager.stopUpdatingLocation()          //****//
-    //locationManager.allowsBackgroundLocationUpdates = false
+    locationManager.stopUpdatingLocation()          //****//
+    locationManager.allowsBackgroundLocationUpdates = false
     print("removed pending notification")
   }
   
   @objc func endLocationUpdates()
   {
-    locationManager.stopUpdatingLocation()
+    //locationManager.stopUpdatingLocation()
   }
   
   //deletes the notification just before being sent if wifi is connected
@@ -130,26 +151,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print("notification removed: wifi connected")
       center.removeAllPendingNotificationRequests()
     }
-    //locationManager.stopUpdatingLocation()          //****//
+    locationManager.allowsBackgroundLocationUpdates = false
+    locationManager.stopUpdatingLocation()          //****//
     
   }
   
-  
-//  func underOne() {
-//    print("wifi status updating...1")
-//    self.timer?.invalidate()
-//  }
-  
-//  @objc func updateNotificationLong()
-//  {
-//    print("notification time: stoped updating location")
-//    self.timerLong?.invalidate() //
-//  }
-  
-//  func printThis(message: String)
-//  {
-//    print(message)
-//  }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
@@ -157,7 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
 
   
-  func geo(fromRegion: CLRegion) -> Geotification? {
+  func geo(fromRegion: CLCircularRegion) -> Geotification? {
     let savedItems = UserDefaults.standard.array(forKey: PreferencesKeys.savedItems) as? [NSData]
     let geotifications = savedItems?.map { NSKeyedUnarchiver.unarchiveObject(with: $0 as Data) as? Geotification }
     let index = geotifications?.index { $0?.identifier == fromRegion.identifier }
@@ -202,14 +208,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: CLLocationManagerDelegate {
   
   //did they enter a region?
-  func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+  func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLCircularRegion) {
     if region is CLCircularRegion {
       handleEventEnter(forRegion: region)
     }
   }
   
   //did they exit a region?
-  func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+  func locationManager(_ manager: CLLocationManager, didExitRegion region: CLCircularRegion) {
     if region is CLCircularRegion {
       handleEventExit(forRegion: region)
     }

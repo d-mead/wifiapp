@@ -71,7 +71,6 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     for geo in geotifications {
       geo.makeLoc()
     }
-    
     geoTable.delegate = self
     geoTable.dataSource = self
     geoTable.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -80,6 +79,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     showTable()
     zoomAnnotationsOnMapView()
     showTable()
+    statusButton.title = "Hide"
     
   }
   
@@ -152,6 +152,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       vc.geoNames = geoNames
       let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
       vc.reg = region
+      vc.type = mapView.mapType
       vc.delegate = self
     }
     else if segue.identifier == "toEdit" {
@@ -164,6 +165,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       vc.geoNames = tempNames
       let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
       vc.reg = region
+      vc.type = mapView.mapType
       vc.delegate = self
     }
   }
@@ -182,6 +184,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
         break
       }
     }
+    updateGeotificationsCount()
 
   }
   
@@ -261,8 +264,26 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     }
   }
   @IBAction func tapped(_ sender: Any) {
-    //showHideTable()
+    showHideTable()
+    if(statusButton.title == "Hide"){
+      statusButton.title = "Show"
+    }
+    else {
+      statusButton.title = "Hide"
+    }
   }
+  
+  @IBAction func counterTapped(_ sender: Any) {
+    showHideTable()
+//    if(statusButton.title == "Hide"){
+//      statusButton.title = "Show"
+//    }
+//    else {
+//      statusButton.title = "Hide"
+//    }
+  }
+  
+  
   
   
   func dist(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Int {
@@ -272,9 +293,11 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   func showTable()
   {
     self.geoTable.isHidden = false
+    statusButton.title = "Hide"
     geoTable.reloadData()
   }
   func hideTable(){
+    statusButton.title = "Show"
     geoTable.isHidden = true
   }
   func showHideTable(){
@@ -392,7 +415,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   // MARK: Other mapview functions
   @IBAction func zoomToCurrentLocation(_ sender: Any) {
     if let userLocation = locationManager.location?.coordinate {
-      let viewRegion = MKCoordinateRegionMakeWithDistance(userLocation, 50, 50)
+      let viewRegion = MKCoordinateRegionMakeWithDistance(userLocation, 250, 250)
       mapView.setRegion(viewRegion, animated: true)
     }
   }
@@ -445,6 +468,7 @@ extension MarkerViewController: EditMarkerViewControllerDelegate {
       addRadiusOverlay(forGeotification: editingGeo!)
       timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
       //geoTable.reloadData()
+      updateGeotificationsCount()
       print("edits made")
       startMonitoring(geotification: editingGeo!)
       saveAllGeotifications()

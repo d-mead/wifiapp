@@ -18,6 +18,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   @IBOutlet weak var noteTextField: UITextField!
   @IBOutlet weak var nameTextField: UITextField!
   @IBOutlet weak var mapView: MKMapView!
+  let locationManager = CLLocationManager()
   var selectedPin:MKPlacemark? = nil
   var reg:MKCoordinateRegion? = nil
   var resultSearchController:UISearchController? = nil
@@ -27,12 +28,22 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   var pickerData: [Int] = [Int]()
   @IBOutlet var onOffSwitch: UISwitch!
   @IBOutlet var mapSwitch: UISegmentedControl!
+  var type:MKMapType = .standard
   
   
   var delegate: AddMarkerViewControllerDelegate?
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    locationManager.delegate = self
+    mapView.mapType = type
+    if(type == .standard) {
+      mapSwitch.selectedSegmentIndex = 0
+    } else if(type == .hybrid) {
+      mapSwitch.selectedSegmentIndex = 1
+    } else {
+      mapSwitch.selectedSegmentIndex = 2
+    }
     mapView.setRegion(reg!, animated: false)
     mapView.delegate = self
     UINavigationBar.appearance().titleTextAttributes = [
@@ -162,8 +173,10 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   }
 
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
-    let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, 50, 50)
-    mapView.setRegion(viewRegion, animated: true)
+    if let userLocation = locationManager.location?.coordinate {
+      let viewRegion = MKCoordinateRegionMakeWithDistance(userLocation, Double(radiusTextField.text!)!*3, Double(radiusTextField.text!)!*3)
+      mapView.setRegion(viewRegion, animated: true)
+    }
   }
   func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
     removeRadiusOverlay()
@@ -202,6 +215,21 @@ extension AddMarkerViewController: HandleMapSearch {
     let span = MKCoordinateSpanMake(0.05, 0.05)
     let region = MKCoordinateRegionMake(placemark.coordinate, span)
     mapView.setRegion(region, animated: true)
+  }
+}
+
+extension AddMarkerViewController: CLLocationManagerDelegate {
+  func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    mapView.showsUserLocation = (status == .authorizedAlways)
+  }
+  func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+    print("Monitoring failed for region with identifier: \(region!.identifier)")
+    print(String(describing: error))
+    //self.locationManager.startMonitoring(for: region!)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    print("Location Manager failed with the following error: \(error)")
   }
 }
 

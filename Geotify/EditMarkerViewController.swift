@@ -19,6 +19,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   @IBOutlet weak var noteTextField: UITextField!
   @IBOutlet weak var nameTextField: UITextField!
   @IBOutlet weak var mapView: MKMapView!
+  let locationManager = CLLocationManager()
   var selectedPin:MKPlacemark? = nil
   var resultSearchController:UISearchController? = nil
   var selectedTime: Int = 0
@@ -30,12 +31,22 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   @IBOutlet var onOffSwitch: UISwitch!
   @IBOutlet var deleteButton: UIBarButtonItem!
   @IBOutlet var mapSwitch: UISegmentedControl!
+  var type:MKMapType = .standard
   
     
   var delegate: EditMarkerViewControllerDelegate?
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    locationManager.delegate = self
+    mapView.mapType = type
+    if(type == .standard) {
+      mapSwitch.selectedSegmentIndex = 0
+    } else if(type == .hybrid) {
+      mapSwitch.selectedSegmentIndex = 1
+    } else {
+      mapSwitch.selectedSegmentIndex = 2
+    }
     mapView.delegate = self
     mapView.setRegion(reg!, animated: false)
     navigationItem.rightBarButtonItems = [addButton, deleteButton]
@@ -66,6 +77,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     onOffSwitch.isOn = (geo?.on)!
     selectedTime = (geo?.delay)!
     addRadiusOverlay()
+    let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, Double(radiusTextField.text!)!*3, Double(radiusTextField.text!)!*3)
+    mapView.setRegion(viewRegion, animated: true)
   }
   
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -176,8 +189,10 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   }
   
   @IBAction private func onZoomToCurrentLocation(sender: AnyObject) {
-    let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, 50, 50)
-    mapView.setRegion(viewRegion, animated: true)
+    if let userLocation = locationManager.location?.coordinate {
+      let viewRegion = MKCoordinateRegionMakeWithDistance(userLocation, Double(radiusTextField.text!)!*3, Double(radiusTextField.text!)!*3)
+      mapView.setRegion(viewRegion, animated: true)
+    }
   }
   
   func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -220,7 +235,20 @@ extension EditMarkerViewController: HandleMapSearch {
   }
 }
 
-
+extension EditMarkerViewController: CLLocationManagerDelegate {
+  func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    mapView.showsUserLocation = (status == .authorizedAlways)
+  }
+  func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+    print("Monitoring failed for region with identifier: \(region!.identifier)")
+    print(String(describing: error))
+    //self.locationManager.startMonitoring(for: region!)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    print("Location Manager failed with the following error: \(error)")
+  }
+}
 
 
 
