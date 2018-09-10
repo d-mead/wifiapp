@@ -12,6 +12,7 @@ protocol AddMarkerViewControllerDelegate {
 
 class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, MKMapViewDelegate {
   
+  var geotifications: [Geotification] = []
   @IBOutlet var addButton: UIBarButtonItem!
   @IBOutlet var zoomButton: UIBarButtonItem!
   @IBOutlet weak var radiusTextField: UITextField!
@@ -75,6 +76,11 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     self.delayPicker.delegate = self
     self.delayPicker.dataSource = self
     addRadiusOverlay()
+    let tap = UITapGestureRecognizer(target: self.view, action: #selector(nameTextField.endEditing(_:)))
+    tap.cancelsTouchesInView = false
+    self.view.addGestureRecognizer(tap)
+    loadAllGeotifications()
+    
   }
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -111,6 +117,19 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
       pickerLabel?.text = String(pickerData[row]) + " minutes"
       return pickerLabel!;
     }
+
+  
+  func loadAllGeotifications() {
+    for geotification in geotifications {
+      print("iterating")
+      addRadiusOverlay(forGeotification: geotification)
+      mapView.addAnnotation(geotification)
+    }
+  }
+  
+  func addRadiusOverlay(forGeotification geotification: Geotification) {
+    mapView?.add(MKCircle(center: geotification.coordinate, radius: geotification.radius))
+  }
   
   //MARK: Overlay
   func addRadiusOverlay() {
@@ -122,8 +141,8 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   func removeRadiusOverlay() {
     // Find exactly one overlay which has the same coordinates & radius to remove
     guard let overlays = mapView?.overlays else { return }
-    for overlay in overlays {
-      mapView?.remove(overlay)
+    if(overlays.count != 0) {
+      mapView.remove(overlays.last!)
     }
   }
 //
@@ -212,7 +231,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
 
 extension AddMarkerViewController: HandleMapSearch {
   func dropPinZoomIn(placemark:MKPlacemark){
-    let span = MKCoordinateSpanMake(0.05, 0.05)
+    let span = MKCoordinateSpanMake(0.01, 0.01)
     let region = MKCoordinateRegionMake(placemark.coordinate, span)
     mapView.setRegion(region, animated: true)
   }

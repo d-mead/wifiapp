@@ -152,6 +152,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       vc.geoNames = geoNames
       let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
       vc.reg = region
+      vc.geotifications = geotifications
       vc.type = mapView.mapType
       vc.delegate = self
     }
@@ -165,6 +166,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       vc.geoNames = tempNames
       let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
       vc.reg = region
+      vc.geotifications = geotifications
       vc.type = mapView.mapType
       vc.delegate = self
     }
@@ -256,21 +258,22 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   
   @IBAction func statusTapped(_ sender: Any) {
     showHideTable()
-    if(statusButton.title == "Hide"){
+    /*if(statusButton.title == "Hide"){
         statusButton.title = "Show"
     }
     else {
       statusButton.title = "Hide"
-    }
+    }*/
+    
   }
   @IBAction func tapped(_ sender: Any) {
     showHideTable()
-    if(statusButton.title == "Hide"){
+    /*if(statusButton.title == "Hide"){
       statusButton.title = "Show"
     }
     else {
       statusButton.title = "Hide"
-    }
+    }*/
   }
   
   @IBAction func counterTapped(_ sender: Any) {
@@ -292,8 +295,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
 
   func showTable()
   {
-    self.geoTable.isHidden = false
     statusButton.title = "Hide"
+    geoTable.isHidden = false
     geoTable.reloadData()
   }
   func hideTable(){
@@ -577,7 +580,7 @@ extension MarkerViewController: MKMapViewDelegate {
   }
   
   func mapView(_: MKMapView, regionWillChangeAnimated: Bool) {
-    hideTable()
+    //hideTable()
   }
 
   

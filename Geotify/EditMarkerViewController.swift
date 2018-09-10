@@ -12,7 +12,7 @@ protocol EditMarkerViewControllerDelegate {
 class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, MKMapViewDelegate  {
   
   
-  
+  var geotifications: [Geotification] = []
   @IBOutlet var addButton: UIBarButtonItem!
   @IBOutlet var zoomButton: UIBarButtonItem!
   @IBOutlet weak var radiusTextField: UITextField!
@@ -79,6 +79,10 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     addRadiusOverlay()
     let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, Double(radiusTextField.text!)!*3, Double(radiusTextField.text!)!*3)
     mapView.setRegion(viewRegion, animated: true)
+    let tap = UITapGestureRecognizer(target: self.view, action: #selector(nameTextField.endEditing(_:)))
+    tap.cancelsTouchesInView = false
+    self.view.addGestureRecognizer(tap)
+    loadAllGeotifications()
   }
   
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -116,6 +120,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     pickerLabel?.text = String(pickerData[row]) + " minutes"
     return pickerLabel!;
   }
+  
+  
   //
   @IBAction func textFieldEditingChanged(sender: UITextField) {
     addButton.isEnabled = !radiusTextField.text!.isEmpty && !noteTextField.text!.isEmpty
@@ -157,6 +163,18 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
       }
     }
   
+  func loadAllGeotifications() {
+    for geotification in geotifications {
+      print("iterating")
+      addRadiusOverlay(forGeotification: geotification)
+      mapView.addAnnotation(geotification)
+    }
+  }
+  
+  func addRadiusOverlay(forGeotification geotification: Geotification) {
+    mapView?.add(MKCircle(center: geotification.coordinate, radius: geotification.radius))
+  }
+  
   func addRadiusOverlay() {
     if(radiusTextField.text != "") {
       mapView?.add(MKCircle(center: mapView.centerCoordinate, radius: Double(radiusTextField.text!)!))
@@ -166,8 +184,8 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   func removeRadiusOverlay() {
     // Find exactly one overlay which has the same coordinates & radius to remove
     guard let overlays = mapView?.overlays else { return }
-    for overlay in overlays {
-      mapView?.remove(overlay)
+    if(overlays.count != 0) {
+      mapView.remove(overlays.last!)
     }
   }
   
@@ -227,9 +245,11 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   
 }
 
+
+
 extension EditMarkerViewController: HandleMapSearch {
   func dropPinZoomIn(placemark:MKPlacemark){
-    let span = MKCoordinateSpanMake(0.025, 0.025)
+    let span = MKCoordinateSpanMake(0.01, 0.01)
     let region = MKCoordinateRegionMake(placemark.coordinate, span)
     mapView.setRegion(region, animated: true)
   }
