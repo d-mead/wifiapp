@@ -76,13 +76,13 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     delayPicker.selectRow(pickerData.index(of: (geo?.delay)!)!, inComponent: 0, animated: true)
     onOffSwitch.isOn = (geo?.on)!
     selectedTime = (geo?.delay)!
+    loadAllGeotifications()
     addRadiusOverlay()
     let viewRegion = MKCoordinateRegionMakeWithDistance(mapView.centerCoordinate, Double(radiusTextField.text!)!*3, Double(radiusTextField.text!)!*3)
     mapView.setRegion(viewRegion, animated: true)
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(nameTextField.endEditing(_:)))
     tap.cancelsTouchesInView = false
     self.view.addGestureRecognizer(tap)
-    loadAllGeotifications()
   }
   
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -187,6 +187,20 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     if(overlays.count != 0) {
       mapView.remove(overlays.last!)
     }
+  }
+  
+  func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    print("tapped")
+    let identifier = "myGeotification"
+    if annotation is Geotification {
+      var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
+      if annotationView == nil {
+        annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        annotationView?.canShowCallout = true
+      }
+      return annotationView
+    }
+    return nil
   }
   
     @IBAction private func onAdd(sender: AnyObject) {

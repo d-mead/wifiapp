@@ -75,11 +75,12 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     pickerData = [0, 1, 5, 10, 15, 20, 25, 30]
     self.delayPicker.delegate = self
     self.delayPicker.dataSource = self
+    loadAllGeotifications()
     addRadiusOverlay()
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(nameTextField.endEditing(_:)))
     tap.cancelsTouchesInView = false
     self.view.addGestureRecognizer(tap)
-    loadAllGeotifications()
+    
     
   }
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -172,7 +173,24 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     }
     
     
-    
+  
+  func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    print("tapped")
+    let identifier = "myGeotification"
+    if annotation is Geotification {
+      var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
+      if annotationView == nil {
+        annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        annotationView?.canShowCallout = true
+      } else {
+        annotationView?.annotation = annotation
+      }
+      return annotationView
+    }
+    return nil
+  }
+  
+  
     @IBAction private func onAdd(sender: AnyObject) {
     let coordinate = mapView.centerCoordinate
     let radius = Double(radiusTextField.text!) ?? 0
@@ -251,6 +269,7 @@ extension AddMarkerViewController: CLLocationManagerDelegate {
     print("Location Manager failed with the following error: \(error)")
   }
 }
+
 
 //extension AddMarkerViewController: MKMapViewDelegate {
 //  func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

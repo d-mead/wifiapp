@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Wifi Check</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,9 +25,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Geotify requires access to your phone’s location to notify you when you enter or leave a geofence.</string>
+	<string>Wifi Check needs to monitor your location to notify you based on your wifi and location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Geotify requires access to your phone’s location to notify you when you enter or leave a geofence.</string>
+	<string>Wifi Check needs your location to set new regions and monitor your status</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SF-Pro-Display-Regular.otf</string>

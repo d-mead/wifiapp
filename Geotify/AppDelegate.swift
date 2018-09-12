@@ -36,9 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   @objc func appMovedToBackground() {
-    locationManager.allowsBackgroundLocationUpdates = false
+    //locationManager.allowsBackgroundLocationUpdates = false
     //locationManager.pausesLocationUpdatesAutomatically = true//****//
-    locationManager.stopUpdatingLocation()          //****//
+    //locationManager.stopUpdatingLocation()          //****//
     print("App moved to background!")
   } //CLCircularRegion(center: loc.center, radius: loc.radius, identifier: loc.identifier).contains((locationManager.location?.coordinate)!)
   //Background
@@ -83,6 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func handleEventEnter(forRegion region: CLCircularRegion!) {
     locationManager.allowsBackgroundLocationUpdates = true
     locationManager.startUpdatingLocation()
+    locationManager.requestLocation()
     print("marker location entered")
     if !isInternetAvailable() {                       //if internet is not avalable at the time
       print("the internet is not connected")
@@ -127,8 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let identifArray = [identif]
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
-    locationManager.stopUpdatingLocation()          //****//
-    locationManager.allowsBackgroundLocationUpdates = false
+    //locationManager.stopUpdatingLocation()          //****//
+    //locationManager.allowsBackgroundLocationUpdates = false
     print("removed pending notification")
   }
   
@@ -151,8 +152,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print("notification removed: wifi connected")
       center.removeAllPendingNotificationRequests()
     }
-    locationManager.allowsBackgroundLocationUpdates = false
-    locationManager.stopUpdatingLocation()          //****//
+    //locationManager.allowsBackgroundLocationUpdates = false
+    //locationManager.stopUpdatingLocation()          //****//
     
   }
   
@@ -224,3 +225,4 @@ extension AppDelegate: CLLocationManagerDelegate {
     print(error)
   }
 }
+
