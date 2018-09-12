@@ -36,6 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   @objc func appMovedToBackground() {
+    locationManager.stopUpdatingLocation()
+    locationManager.startMonitoringSignificantLocationChanges()
     //locationManager.allowsBackgroundLocationUpdates = false
     //locationManager.pausesLocationUpdatesAutomatically = true//****//
     //locationManager.stopUpdatingLocation()          //****//
@@ -82,7 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   //if the user enters the location
   func handleEventEnter(forRegion region: CLCircularRegion!) {
     locationManager.allowsBackgroundLocationUpdates = true
-    locationManager.startUpdatingLocation()
+    //locationManager.startUpdatingLocation()
+    locationManager.startMonitoringSignificantLocationChanges()
     locationManager.requestLocation()
     print("marker location entered")
     if !isInternetAvailable() {                       //if internet is not avalable at the time
@@ -129,6 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
     //locationManager.stopUpdatingLocation()          //****//
+    //locationManager.startMonitoringSignificantLocationChanges()
     //locationManager.allowsBackgroundLocationUpdates = false
     print("removed pending notification")
   }
@@ -154,6 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     //locationManager.allowsBackgroundLocationUpdates = false
     //locationManager.stopUpdatingLocation()          //****//
+    //locationManager.startMonitoringSignificantLocationChanges()
     
   }
   

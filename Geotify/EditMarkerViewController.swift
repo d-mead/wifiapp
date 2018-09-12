@@ -83,6 +83,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(nameTextField.endEditing(_:)))
     tap.cancelsTouchesInView = false
     self.view.addGestureRecognizer(tap)
+    removeRadiusOverlay(forGeotification: geo!)
   }
   
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -143,6 +144,19 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
       mapView.mapType = .satellite
     default:
       mapView.mapType = .standard
+    }
+  }
+  
+  func removeRadiusOverlay(forGeotification geotification: Geotification) {
+    // Find exactly one overlay which has the same coordinates & radius to remove
+    guard let overlays = mapView?.overlays else { return }
+    for overlay in overlays {
+      guard let circleOverlay = overlay as? MKCircle else { continue }
+      let coord = circleOverlay.coordinate
+      if coord.latitude == geotification.coordinate.latitude && coord.longitude == geotification.coordinate.longitude && circleOverlay.radius == geotification.radius {
+        mapView?.remove(circleOverlay)
+        break
+      }
     }
   }
   
