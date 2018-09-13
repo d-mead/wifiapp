@@ -166,7 +166,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       vc.geoNames = tempNames
       let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: mapView.centerCoordinate.latitude + (0.23*mapView.region.span.latitudeDelta), longitude: mapView.centerCoordinate.longitude), span: mapView.region.span)
       vc.reg = region
-      vc.geotifications = geotifications
+      vc.geotifications = geotifications.filter { $0 != editingGeo }
       vc.type = mapView.mapType
       vc.delegate = self
     }

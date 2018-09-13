@@ -155,6 +155,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
       let coord = circleOverlay.coordinate
       if coord.latitude == geotification.coordinate.latitude && coord.longitude == geotification.coordinate.longitude && circleOverlay.radius == geotification.radius {
         mapView?.remove(circleOverlay)
+        print("found")
         break
       }
     }
