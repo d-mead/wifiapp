@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   @objc func appMovedToBackground() {
-    locationManager.distanceFilter = 100
+    locationManager.distanceFilter = 200000
     //locationManager.startMonitoringSignificantLocationChanges()
     locationManager.allowsBackgroundLocationUpdates = true
     //locationManager.pausesLocationUpdatesAutomatically = true//****//

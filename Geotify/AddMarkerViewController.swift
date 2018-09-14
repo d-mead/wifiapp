@@ -72,7 +72,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     definesPresentationContext = true
     locationSearchTable.mapView = mapView
     locationSearchTable.handleMapSearchDelegate = self as HandleMapSearch
-    pickerData = [0, 1, 5, 10, 15, 20, 25, 30]
+    pickerData = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
     self.delayPicker.delegate = self
     self.delayPicker.dataSource = self
     loadAllGeotifications()
@@ -80,6 +80,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(nameTextField.endEditing(_:)))
     tap.cancelsTouchesInView = false
     self.view.addGestureRecognizer(tap)
+    delayPicker.selectRow(pickerData.index(of: 10)!, inComponent: 0, animated: true)
     
     
   }
