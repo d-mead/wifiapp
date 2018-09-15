@@ -133,7 +133,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
     //locationManager.stopUpdatingLocation()          //****//
-    locationManager.distanceFilter = 100
+    locationManager.distanceFilter = 200000
     //locationManager.startMonitoringSignificantLocationChanges()
     //locationManager.allowsBackgroundLocationUpdates = false
     print("removed pending notification")
@@ -159,7 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       center.removeAllPendingNotificationRequests()
     }
     //locationManager.allowsBackgroundLocationUpdates = false
-    locationManager.distanceFilter = 100
+    locationManager.distanceFilter = 200000
     //locationManager.stopUpdatingLocation()          //****//
     locationManager.startMonitoringSignificantLocationChanges()
     
