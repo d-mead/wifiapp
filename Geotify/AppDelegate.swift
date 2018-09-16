@@ -38,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   @objc func appMovedToBackground() {
     locationManager.distanceFilter = 200000
     //locationManager.startMonitoringSignificantLocationChanges()
-    locationManager.allowsBackgroundLocationUpdates = true
+    //locationManager.allowsBackgroundLocationUpdates = true
     //locationManager.pausesLocationUpdatesAutomatically = true//****//
     //locationManager.stopUpdatingLocation()          //****//
     print("App moved to background!")
@@ -84,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   //if the user enters the location
   func handleEventEnter(forRegion region: CLCircularRegion!) {
     locationManager.distanceFilter = kCLDistanceFilterNone
-    locationManager.allowsBackgroundLocationUpdates = true
+    //locationManager.allowsBackgroundLocationUpdates = true
     //locationManager.startUpdatingLocation()
     //locationManager.startMonitoringSignificantLocationChanges()
     locationManager.requestLocation()
@@ -161,7 +161,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //locationManager.allowsBackgroundLocationUpdates = false
     locationManager.distanceFilter = 200000
     //locationManager.stopUpdatingLocation()          //****//
-    locationManager.startMonitoringSignificantLocationChanges()
+    //locationManager.startMonitoringSignificantLocationChanges()
     
   }
   
