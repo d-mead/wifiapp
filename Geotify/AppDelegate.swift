@@ -5,6 +5,7 @@ import SystemConfiguration
 import UserNotifications
 import Foundation
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
@@ -36,8 +37,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   @objc func appMovedToBackground() {
-    locationManager.distanceFilter = 200000
-    //locationManager.startMonitoringSignificantLocationChanges()
+    //locationManager.distanceFilter = 200000
+    locationManager.stopUpdatingLocation() //begins updating the user's location
+    locationManager.startMonitoringSignificantLocationChanges()
     //locationManager.allowsBackgroundLocationUpdates = true
     //locationManager.pausesLocationUpdatesAutomatically = true//****//
     //locationManager.stopUpdatingLocation()          //****//
@@ -83,13 +85,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   //if the user enters the location
   func handleEventEnter(forRegion region: CLCircularRegion!) {
-    locationManager.distanceFilter = kCLDistanceFilterNone
-    //locationManager.allowsBackgroundLocationUpdates = true
-    //locationManager.startUpdatingLocation()
-    //locationManager.startMonitoringSignificantLocationChanges()
-    locationManager.requestLocation()
+    
     print("marker location entered")
     if !isInternetAvailable() {                       //if internet is not avalable at the time
+      locationManager.distanceFilter = kCLDistanceFilterNone
+      //locationManager.allowsBackgroundLocationUpdates = true
+      locationManager.stopMonitoringSignificantLocationChanges()
+      locationManager.startUpdatingLocation()
+      locationManager.requestLocation()
       print("the internet is not connected")
       let geotification = geo(fromRegion: region)     //geotification is the geotification that was notified
       if geotification != nil {                       //if the geotification just found is not null
@@ -132,9 +135,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let identifArray = [identif]
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
-    //locationManager.stopUpdatingLocation()          //****//
-    locationManager.distanceFilter = 200000
-    //locationManager.startMonitoringSignificantLocationChanges()
+    locationManager.stopUpdatingLocation()          //****//
+    //locationManager.distanceFilter = 200000
+    locationManager.startMonitoringSignificantLocationChanges()
     //locationManager.allowsBackgroundLocationUpdates = false
     print("removed pending notification")
   }
@@ -159,9 +162,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       center.removeAllPendingNotificationRequests()
     }
     //locationManager.allowsBackgroundLocationUpdates = false
-    locationManager.distanceFilter = 200000
-    //locationManager.stopUpdatingLocation()          //****//
-    //locationManager.startMonitoringSignificantLocationChanges()
+    locationManager.stopUpdatingLocation()          //****//
+    //locationManager.distanceFilter = 200000
+    locationManager.startMonitoringSignificantLocationChanges()
     
   }
   
