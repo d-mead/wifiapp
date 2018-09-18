@@ -1,19 +1,3 @@
-//
-//  LocationSearchTable.swift
-//  Geotify
-//
-//  Created by David Mead on 4/17/18.
-//  Copyright © 2018 Ken Toh. All rights reserved.
-//
-
-//
-//  LocationSearchTable.swift
-//  Geotify
-//
-//  Created by David Mead on 4/16/18.
-//  Copyright © 2018 Ken Toh. All rights reserved.
-//
-
 import UIKit
 import MapKit
 

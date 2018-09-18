@@ -1,25 +1,3 @@
-/**
- * Copyright (c) 2016 Razeware LLC
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 import UIKit
 import MapKit
 import CoreLocation
@@ -34,26 +12,18 @@ struct PreferencesKeys {
 
 class MarkerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
   
-  @IBOutlet weak var mapView: MKMapView!
-  
-  
-  @IBOutlet var activeCounter: UIBarButtonItem!
-  var geotifications: [Geotification] = []
-  var geoNames: [String] = []
-  var geoAddress: [String] = []
-  let locationManager = CLLocationManager()
-  var editingGeo: Geotification? = nil
-  @IBOutlet var statusButton: UIBarButtonItem!
-  var wifiStatus = "Status: Unknown"
+  @IBOutlet weak var mapView: MKMapView!            //main map view
+  @IBOutlet var activeCounter: UIBarButtonItem!     //counter for active regions
+  @IBOutlet var statusButton: UIBarButtonItem!      //hide/show button
   @IBOutlet var geoTable: UITableView!
-  let geocoder = CLGeocoder()
-  var placemark: CLPlacemark?
-  var city: String?
-  var state: String?
-  var timer = Timer()
-  var timer2 = Timer()
+  
+  var geotifications: [Geotification] = []          //list of markers
+  var geoNames: [String] = []                       //list of names of markers
+  let locationManager = CLLocationManager()
+  var editingGeo: Geotification? = nil              //geo being sent to be edited
+  var timer = Timer()                               //timer used for the city, state updating in the table
   let delay = 0.5
-  var count = 0
+  var count = 0                                     //counter for the active regions
   @IBOutlet var mapSwitch: UISegmentedControl!
   
   override func viewDidLoad() {
@@ -61,31 +31,26 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     
     locationManager.delegate = self
     locationManager.requestAlwaysAuthorization()
-    var c = 0
-    for reg in locationManager.monitoredRegions {
-      //locationManager.stopMonitoring(for: reg)
-      c = c + 1
-      print(String(c))
-    }
     loadAllGeotifications()
     for geo in geotifications {
-      geo.makeLoc()
+      geo.makeLoc()               //makes the city, state location for all the geotifications
     }
+    timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
+    
     geoTable.delegate = self
     geoTable.dataSource = self
     geoTable.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-    mapView.showAnnotations(mapView.annotations, animated: false)
-    timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
-    showTable()
-    zoomAnnotationsOnMapView()
     showTable()
     statusButton.title = "Hide"
     
+    mapView.showAnnotations(mapView.annotations, animated: false)
+    zoomAnnotationsOnMapView()
   }
   
+  
+  //called when the user selects a different map type
   @IBAction func mapChanged(_ sender: Any) {
-    switch mapSwitch.selectedSegmentIndex
-    {
+    switch mapSwitch.selectedSegmentIndex {
     case 0:
       mapView.mapType = .standard
     case 1:
@@ -97,8 +62,9 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     }
   }
   
-  func zoomAnnotationsOnMapView()
-  {
+  
+  //sets the zoom on the map view to encompass all of the annotations
+  func zoomAnnotationsOnMapView() {
     if (mapView.annotations.count < 2) {
       return
     }
@@ -144,7 +110,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     mapView.setVisibleMapRect(mapRect, edgePadding: edgePadding, animated: true)
   }
   
-  //MARK: Prepare Segues
+  
+  //preparing segues
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if segue.identifier == "addGeotification" {
       let navigationController = segue.destination as! UINavigationController
@@ -173,10 +140,11 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   }
   
   
+  //update the geo table
   @objc func updateGeoTable() {
     print("action has started")
     geoTable.reloadData()
-    let cells = geoTable.visibleCells as! Array<UITableViewCell>
+    let cells = geoTable.visibleCells
     for cell in cells {
       if cell.detailTextLabel?.text == "" {
         if count < 5 {
@@ -187,27 +155,10 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
       }
     }
     updateGeotificationsCount()
-
   }
   
-  /*@objc func checkLocs() {
-    if geotifications[geotifications.count-1].loc != nil {
-      geoTable.reloadData()
-    } else {
-        timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(checkLocs), userInfo: nil, repeats: false)
-    }
-  }*/
   
-//  @objc func checkConnection() {
-//    if isInternetAvailable() {
-//      statusButton.title = "Status: Connected"
-//    } else {
-//      statusButton.title = "Status: Disconnected"
-//    }
-//  }
-  
-  
-  // Mark: desiging the cell
+  //designing the cells
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     var cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier")
     if cell == nil {
@@ -215,35 +166,26 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     }
     cell?.textLabel?.text = geotifications[indexPath.row].name
     cell?.detailTextLabel?.text = geotifications[indexPath.row].loc
-    
-    //print("designing cell: " + geotifications[indexPath.row].loc!)
-    /*var address = geotifications[indexPath.row].loc {
-      didSet {
-        print("changed")
-      }
-    }*/
-    //cell?.detailTextLabel?.text = address
     cell?.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
     return cell!
   }
   
+  //for deleting the rows when swipped on
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-    
     if editingStyle == .delete {
       print("begining delete")
       removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
       remove(geotification: geotifications[indexPath.row])
-      //removeRadiusOverlay(forGeotification: geotifications[indexPath.row])
-      //geoTable.deleteRows(at: [indexPath], with: .fade)
       
       print("delete in tableView finished, count: " + String(geotifications.count))
       
     } else if editingStyle == .insert {
-      // Not used in our example, but if you were adding a new row, this is where you would do it.
+      // if adding a row
     }
   }
   
   
+  //selected a row of the table
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let i = geoNames.index(of: geotifications[indexPath.row].name)
     editingGeo = geotifications[i!]
@@ -251,59 +193,41 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     self.performSegue(withIdentifier: "toEdit", sender: self)
   }
   
-  func newLocationAvalable() {
-    geoTable.reloadData()
-    print("update reguest recieved")
-  }
   
+  //status button tapped
   @IBAction func statusTapped(_ sender: Any) {
     showHideTable()
-    /*if(statusButton.title == "Hide"){
-        statusButton.title = "Show"
-    }
-    else {
-      statusButton.title = "Hide"
-    }*/
-    
   }
+  
+  
+  //middle space tapped
   @IBAction func tapped(_ sender: Any) {
     showHideTable()
-    /*if(statusButton.title == "Hide"){
-      statusButton.title = "Show"
-    }
-    else {
-      statusButton.title = "Hide"
-    }*/
   }
   
+  
+  //counter tapped
   @IBAction func counterTapped(_ sender: Any) {
     showHideTable()
-//    if(statusButton.title == "Hide"){
-//      statusButton.title = "Show"
-//    }
-//    else {
-//      statusButton.title = "Hide"
-//    }
   }
   
-  
-  
-  
-  func dist(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Int {
-    return 10
-  }
-
-  func showTable()
-  {
+  //shows the table
+  func showTable() {
     statusButton.title = "Hide"
     geoTable.isHidden = false
     geoTable.reloadData()
   }
-  func hideTable(){
+  
+  
+  //hides the table
+  func hideTable() {
     statusButton.title = "Show"
     geoTable.isHidden = true
   }
-  func showHideTable(){
+  
+  
+  //shows or hides the table as appropriate
+  func showHideTable() {
     if(geoTable.isHidden) {
       showTable()
     } else {
@@ -311,34 +235,36 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     }
   }
   
+  //number of columns in table
   func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-    // 1
     return 1
   }
   
+  //number of rows in table
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    // 2
     return geotifications.count
   }
   
+  //retusn the list of Geotifications
   func getList() -> [Geotification]?
   {
     return geotifications
   }
   
-  // MARK: Loading and saving functions
+  //loading data (geotifications list)
   func loadAllGeotifications() {
     geotifications = []
     guard let savedItems = UserDefaults.standard.array(forKey: PreferencesKeys.savedItems) else { return }
     for savedItem in savedItems {
       guard let geotification = NSKeyedUnarchiver.unarchiveObject(with: savedItem as! Data) as? Geotification else { continue }
       add(geotification: geotification)
-      //geoAddress.append(geotification.loc!)
       //print("accessed: " + geotification.loc!)
       addRadiusOverlay(forGeotification: geotification)
     }
   }
   
+  
+  //saving data (geotifications list)
   func saveAllGeotifications() {
     var items: [Data] = []
     for geotification in geotifications {
@@ -349,7 +275,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     UserDefaults.standard.set(items, forKey: PreferencesKeys.savedItems)
   }
   
-  // MARK: Functions that update the model/associated views with geotification changes
+  
+  //adds geotification to all appropiate list, counters, view, etc
   func add(geotification: Geotification) {
     geotifications.append(geotification)
     geoNames.append(geotification.name)
@@ -364,6 +291,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     showTable()
   }
   
+  
+  //removes geotification from all appropiate list, counters, view, etc
   func remove(geotification: Geotification) {
     print("begining remove function, count: " + String(geotifications.count))
     if let indexInArray = geotifications.index(of: geotification) {
@@ -380,8 +309,8 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     zoomAnnotationsOnMapView()
   }
   
+  //updates the count of geotifications
   func updateGeotificationsCount() {
-    //title = "Markers (\(geotifications.count))"
     var count = 0
     for geo in geotifications {
       if(geo.on)!{
@@ -397,11 +326,13 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     navigationItem.rightBarButtonItem?.isEnabled = (geotifications.count < 20)
   }
   
-  // MARK: Map overlay functions
+  
+  //adds a radius overlay for the geotification on the map view
   func addRadiusOverlay(forGeotification geotification: Geotification) {
     mapView?.add(MKCircle(center: geotification.coordinate, radius: geotification.radius))
   }
   
+  //
   func removeRadiusOverlay(forGeotification geotification: Geotification) {
     // Find exactly one overlay which has the same coordinates & radius to remove
     guard let overlays = mapView?.overlays else { return }

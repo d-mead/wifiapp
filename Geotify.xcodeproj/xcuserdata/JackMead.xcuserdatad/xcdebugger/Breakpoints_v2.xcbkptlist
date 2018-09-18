@@ -290,44 +290,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "558756079.264241"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
-            landmarkName = "tableView(_:didSelectRowAt:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Geotify/MarkerViewController.swift"
-            timestampString = "558756079.268342"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
-            landmarkName = "prepare(for:sender:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Geotify/MarkerViewController.swift"
             timestampString = "558756079.26843"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "79"
             endingLineNumber = "79"
-            landmarkName = "viewDidLoad()"
+            landmarkName = "zoomAnnotationsOnMapView()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -343,7 +311,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "431"
             endingLineNumber = "431"
-            landmarkName = "addMarkerViewController(controller:didAddCoordinate:radius:identifier:note:delay:on:)"
+            landmarkName = "editMarkerViewController(controller:didAddCoordinate:radius:identifier:note:editing:delay:on:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -359,7 +327,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "432"
             endingLineNumber = "432"
-            landmarkName = "addMarkerViewController(controller:didAddCoordinate:radius:identifier:note:delay:on:)"
+            landmarkName = "editMarkerViewController(controller:didAddCoordinate:radius:identifier:note:editing:delay:on:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -375,7 +343,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "160"
             endingLineNumber = "160"
-            landmarkName = "prepare(for:sender:)"
+            landmarkName = "updateGeoTable()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -391,8 +359,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "420"
             endingLineNumber = "420"
-            landmarkName = "zoomToCurrentLocation(_:)"
-            landmarkType = "7">
+            landmarkName = "MarkerViewController"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -407,7 +375,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "62"
             endingLineNumber = "62"
-            landmarkName = "viewDidLoad()"
+            landmarkName = "mapChanged(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -423,7 +391,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "331"
             endingLineNumber = "331"
-            landmarkName = "loadAllGeotifications()"
+            landmarkName = "add(geotification:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -439,7 +407,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "354"
             endingLineNumber = "354"
-            landmarkName = "add(geotification:)"
+            landmarkName = "remove(geotification:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -454,9 +422,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "init(coder:)"
-            landmarkType = "7">
+            endingLineNumber = "160">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -471,7 +437,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "308"
             endingLineNumber = "308"
-            landmarkName = "showHideTable()"
+            landmarkName = "loadAllGeotifications()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
