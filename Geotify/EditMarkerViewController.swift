@@ -66,7 +66,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
     noteTextField.text = geo?.name
     radiusTextField.text = String(format:"%.0f", (geo?.radius)!)
     mapView.setRegion(MKCoordinateRegion(center: (geo?.coordinate)!, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)), animated: true)
-    pickerData = [0, 1, 5, 10, 15, 20, 25, 30]
+    pickerData = [0, 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
     self.delayPicker.delegate = self
     self.delayPicker.dataSource = self
     searchBar.tintColor = UIColor.white
