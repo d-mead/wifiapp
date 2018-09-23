@@ -206,7 +206,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
       self.present(alert, animated: true, completion: nil)
     }
     else {
-      delegate?.addMarkerViewController(controller: self, didAddCoordinate: coordinate, radius: radius, identifier: identifier, note: note!, delay: delay, on: on)
+      delegate?.addMarkerViewController(controller: self, didAddCoordinate: coordinate, radius: radius, identifier: identifier, note: note!, delay: selectedTime, on: on)
     }
   }
 
