@@ -35,7 +35,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     for geo in geotifications {
       geo.makeLoc()               //makes the city, state location for all the geotifications
     }
-    timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
+    timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
     
     geoTable.delegate = self
     geoTable.dataSource = self

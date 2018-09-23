@@ -36,18 +36,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
   
+  
   @objc func appMovedToBackground() {
-    //locationManager.distanceFilter = 200000
     locationManager.stopUpdatingLocation() //begins updating the user's location
     locationManager.startMonitoringSignificantLocationChanges()
-    //locationManager.allowsBackgroundLocationUpdates = true
-    //locationManager.pausesLocationUpdatesAutomatically = true//****//
-    //locationManager.stopUpdatingLocation()          //****//
-    // print(isVPNConnected())
     print(isInternetAvailable())
     print("App moved to background!")
-  } //CLCircularRegion(center: loc.center, radius: loc.radius, identifier: loc.identifier).contains((locationManager.location?.coordinate)!)
-  //Background
+  }
   
   
   func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler:
@@ -74,16 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       }
     }
   }
-  
-  //  if moved into background:
-  //    stop updating location
-  //  if entered the location:
-  //    start updating the location
-  //  if:
-  //    reached the wifi checkpoint:
-  //      stop updating location
-  //    left the location:
-  //      stop updating location
+
   
   //if the user enters the location
   func handleEventEnter(forRegion region: CLCircularRegion!) {
@@ -91,24 +77,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     print("marker location entered")
     if !isInternetAvailable() {                       //if internet is not avalable at the time
       locationManager.distanceFilter = kCLDistanceFilterNone
-      //locationManager.allowsBackgroundLocationUpdates = true
-      //locationManager.stopMonitoringSignificantLocationChanges()
       locationManager.startUpdatingLocation()
       locationManager.requestLocation()
       print("the internet is not connected")
       let geotification = geo(fromRegion: region)     //geotification is the geotification that was notified
       if geotification != nil {                       //if the geotification just found is not null
-        let identif = geotification?.name             ///////
-        print("name: " + identif!)                    //
+        let identif = geotification?.name
+        print("name: " + identif!)
         let time = geotification?.delay               //this portion extracts the data from the found geotification
-        print("delay: " + String(describing: time!))   //
-        let on = geotification?.on                    //
-        print("on: " + String(describing: on))        ///////
+        print("delay: " + String(describing: time!))
+        let on = geotification?.on
+        print("on: " + String(describing: on))
         print()
         if on! {                                      //if the geotificaion is set to on
           DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60-5), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)                  //sets a timer to update the state of the notification 5 seconds before sending
-            //self.timerL = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60+10), target: self, selector: #selector(AppDelegate.endLocationUpdates), userInfo: nil, repeats: false) //sets timer for the function that will stop the location updates
           }
           let content = UNMutableNotificationContent()
           content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi connection", arguments: nil)       //body content of the notifcation
@@ -143,22 +126,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     center.removePendingNotificationRequests(withIdentifiers: identifArray)
     count = 0
     locationManager.stopUpdatingLocation()          //****//
-    //locationManager.distanceFilter = 200000
     locationManager.startMonitoringSignificantLocationChanges()
-    //locationManager.allowsBackgroundLocationUpdates = false
+
     print("removed pending notification")
   }
   
-  @objc func endLocationUpdates()
-  {
-    //locationManager.stopUpdatingLocation()
-  }
   
   //deletes the notification just before being sent if wifi is connected
   @objc func updateNotification()
   {
     update()
   }
+  
   
   func update()
   {
@@ -168,9 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       print("notification removed: wifi connected")
       center.removeAllPendingNotificationRequests()
     }
-    //locationManager.allowsBackgroundLocationUpdates = false
-    locationManager.stopUpdatingLocation()          //****//
-    //locationManager.distanceFilter = 200000
+    locationManager.stopUpdatingLocation()
     locationManager.startMonitoringSignificantLocationChanges()
     
   }
@@ -273,6 +250,8 @@ extension AppDelegate: CLLocationManagerDelegate {
   func locationManager(_ manager: CLLocationManager, didExitRegion region: CLCircularRegion) {
     handleEventExit(forRegion: region)
   }
+  
+  
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     print(error)
   }

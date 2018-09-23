@@ -22,7 +22,7 @@ class EditMarkerViewController: UITableViewController, UIPickerViewDelegate, UIP
   let locationManager = CLLocationManager()
   var selectedPin:MKPlacemark? = nil
   var resultSearchController:UISearchController? = nil
-  var selectedTime: Int = 0
+  var selectedTime: Int = 10
   var geo: Geotification? = nil
   var reg:MKCoordinateRegion? = nil
   var geoNames: [String] = []

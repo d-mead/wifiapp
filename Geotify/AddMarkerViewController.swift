@@ -23,7 +23,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
   var selectedPin:MKPlacemark? = nil
   var reg:MKCoordinateRegion? = nil
   var resultSearchController:UISearchController? = nil
-  var selectedTime: Int = 0
+  var selectedTime: Int = 10
   var geoNames: [String] = []
   @IBOutlet var delayPicker: UIPickerView!
   var pickerData: [Int] = [Int]()
