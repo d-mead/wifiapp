@@ -44,11 +44,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     print("App moved to background!")
   }
   
-  
+  //Background app refresh
   func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler:
     @escaping (UIBackgroundFetchResult) -> Void) { //checks if the user is in a marked location and is not connected to wifi
     locationManager.requestLocation()
     print("background refresh")
+    if(isInternetAvailable()) {
+      center.removeAllDeliveredNotifications()
+    }
     for loc in locationManager.monitoredRegions {
       if((loc as! CLCircularRegion).contains((locationManager.location?.coordinate)!)) {
         print("user was inside marker during background refresh")

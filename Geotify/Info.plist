@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Wifi Remind</string>
+	<string>WiFi Remind</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,13 +21,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Wifi Check needs to monitor your location to notify you based on your wifi and location</string>
+	<string>WiFi Remind needs your location to be able to notify you if you are in a marked area and without WiFi</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Wifi Check needs your location to set new regions and monitor your status</string>
+	<string>WiFi Remind needs your location to create new regions based on your location</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SF-Pro-Display-Regular.otf</string>

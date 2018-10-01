@@ -323,6 +323,8 @@
                                                 <constraint firstItem="akJ-gx-Z6s" firstAttribute="centerX" secondItem="G8a-9u-bod" secondAttribute="centerX" id="S1q-kj-wQi"/>
                                                 <constraint firstItem="jsV-oa-Fol" firstAttribute="top" secondItem="G8a-9u-bod" secondAttribute="topMargin" id="Wf5-dF-ajg"/>
                                                 <constraint firstAttribute="trailing" secondItem="frU-qC-iGG" secondAttribute="trailing" id="g6D-fM-XdY"/>
+                                                <constraint firstItem="akJ-gx-Z6s" firstAttribute="centerX" secondItem="G8a-9u-bod" secondAttribute="centerX" id="mVM-sd-33m"/>
+                                                <constraint firstItem="akJ-gx-Z6s" firstAttribute="centerY" secondItem="G8a-9u-bod" secondAttribute="centerY" id="mvz-Md-GPp"/>
                                                 <constraint firstItem="frU-qC-iGG" firstAttribute="centerY" secondItem="G8a-9u-bod" secondAttribute="centerY" id="t54-Nf-s1l"/>
                                                 <constraint firstItem="frU-qC-iGG" firstAttribute="top" secondItem="G8a-9u-bod" secondAttribute="top" id="vby-lz-l81"/>
                                                 <constraint firstItem="akJ-gx-Z6s" firstAttribute="centerY" secondItem="G8a-9u-bod" secondAttribute="centerY" id="waO-H6-J9M"/>
@@ -533,12 +535,14 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="qne-q6-JQn" firstAttribute="leading" secondItem="zNA-et-q2F" secondAttribute="leadingMargin" constant="-6" id="5PH-NC-GFI"/>
+                                                <constraint firstItem="mdB-ek-kNq" firstAttribute="centerX" secondItem="zNA-et-q2F" secondAttribute="centerX" id="68o-uH-v7p"/>
                                                 <constraint firstAttribute="bottom" secondItem="18T-wS-MBk" secondAttribute="bottom" id="BqD-eG-YQC"/>
                                                 <constraint firstItem="qne-q6-JQn" firstAttribute="top" secondItem="zNA-et-q2F" secondAttribute="topMargin" constant="-1" id="GST-Ab-Vf6"/>
                                                 <constraint firstItem="18T-wS-MBk" firstAttribute="leading" secondItem="zNA-et-q2F" secondAttribute="leading" priority="250" id="JXB-8L-80L"/>
                                                 <constraint firstItem="18T-wS-MBk" firstAttribute="top" secondItem="zNA-et-q2F" secondAttribute="top" id="LoD-eN-wXY"/>
                                                 <constraint firstAttribute="trailing" secondItem="18T-wS-MBk" secondAttribute="trailing" id="N97-yU-A1h"/>
                                                 <constraint firstItem="mdB-ek-kNq" firstAttribute="centerX" secondItem="zNA-et-q2F" secondAttribute="centerX" id="cwM-rQ-bqm"/>
+                                                <constraint firstItem="mdB-ek-kNq" firstAttribute="centerY" secondItem="zNA-et-q2F" secondAttribute="centerY" id="pU1-V7-Rd3"/>
                                                 <constraint firstItem="mdB-ek-kNq" firstAttribute="centerY" secondItem="zNA-et-q2F" secondAttribute="centerY" id="y4o-n7-PPA"/>
                                             </constraints>
                                         </tableViewCellContentView>

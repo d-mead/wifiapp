@@ -35,7 +35,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     for geo in geotifications {
       geo.makeLoc()               //makes the city, state location for all the geotifications
     }
-    timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
+    timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
     
     geoTable.delegate = self
     geoTable.dataSource = self
@@ -147,11 +147,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     let cells = geoTable.visibleCells
     for cell in cells {
       if cell.detailTextLabel?.text == "" {
-        if count < 5 {
-          timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
-          count = count + 1
-        }
-        break
+        timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateGeoTable), userInfo: nil, repeats: false)
       }
     }
     updateGeotificationsCount()
@@ -370,6 +366,7 @@ extension MarkerViewController: AddMarkerViewControllerDelegate {
     geotification.delay = delay
     add(geotification: geotification)
     addRadiusOverlay(forGeotification: geotification)
+    updateGeoTable()
     saveAllGeotifications()
   }
   
@@ -387,7 +384,7 @@ extension MarkerViewController: EditMarkerViewControllerDelegate {
       geoNames[geoNames.index(of: (editingGeo?.name)!)!] = note
       //editingGeo?.makeLoc()
       print("making loc")
-      editingGeo?.coordinate = coordinate
+      
       editingGeo?.radius = radius
       editingGeo?.identifier = identifier
       editingGeo?.name = note
@@ -395,9 +392,13 @@ extension MarkerViewController: EditMarkerViewControllerDelegate {
       editingGeo?.on = on
       addRadiusOverlay(forGeotification: editing)
       editingGeo?.clearLoc()
-      geotifications[geoNames.index(of: (editingGeo?.name)!)!].clearLoc()
-      geoTable.reloadData()
-      editingGeo?.makeLoc()
+      
+      if editingGeo!.coordinate.latitude != coordinate.latitude && editingGeo!.coordinate.longitude != coordinate.longitude {
+        editingGeo?.coordinate = coordinate
+        geotifications[geoNames.index(of: (editingGeo?.name)!)!].clearLoc()
+        geoTable.reloadData()
+        editingGeo?.makeLoc()
+      }
       mapView.removeAnnotation(geotifications[geoNames.index(of: (editingGeo?.name)!)!])
       mapView.addAnnotation(geotifications[geoNames.index(of: (editingGeo?.name)!)!])
       addRadiusOverlay(forGeotification: editingGeo!)
@@ -407,6 +408,7 @@ extension MarkerViewController: EditMarkerViewControllerDelegate {
       print("edits made")
       startMonitoring(geotification: editingGeo!)
       saveAllGeotifications()
+      updateGeoTable()
     }
     zoomAnnotationsOnMapView()
   }
@@ -444,6 +446,9 @@ extension MarkerViewController: MKMapViewDelegate {
         editButton.frame = CGRect(x: 0, y: 0, width: 36, height: 23)
         editButton.setTitle("Edit", for: .normal)
         editButton.setTitleColor(UIColor.blue, for: .normal)
+        editButton.layer.cornerRadius = 5
+        editButton.layer.borderWidth = 1
+        editButton.layer.borderColor = UIColor.blue.cgColor
         annotationView?.leftCalloutAccessoryView = editButton
       } else {
         annotationView?.annotation = annotation
