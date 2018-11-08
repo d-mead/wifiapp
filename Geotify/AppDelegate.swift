@@ -58,11 +58,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if(!isInternetAvailable()){
           print("internet not avalable duirng background refresh")
           let content = UNMutableNotificationContent()
-          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi connection", arguments: nil)       //body content of the notifcation
-          content.body = NSString.localizedUserNotificationString(forKey: ("It appears you are at " + (geo(fromRegion: loc as! CLCircularRegion)?.name)! + " and are not connected to wifi"), arguments: nil)
+          content.title = NSString.localizedUserNotificationString(forKey: "Check your WiFi connection", arguments: nil)       //body content of the notifcation
+          content.body = NSString.localizedUserNotificationString(forKey: ("It appears you are at " + (geo(fromRegion: loc as! CLCircularRegion)?.name)! + " and are not connected to WiFi"), arguments: nil)
           let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(5)), repeats: false)  //creates the notification and sets when it will be sent
           let request = UNNotificationRequest(identifier: (geo(fromRegion: loc as! CLCircularRegion)?.name)!, content: content, trigger: trigger)              //creates the request
-          center.add(request) { (error : Error?) in   //adds the request for the notification to be sent
+          center.add(request) { (error : Error?) in   //adds the request for the not; ification to be sent
             if let theError = error {
               print(theError.localizedDescription)
             }
@@ -97,11 +97,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(time!*60-5), target: self, selector: #selector(AppDelegate.updateNotification), userInfo: nil, repeats: false)                  //sets a timer to update the state of the notification 5 seconds before sending
           }
           let content = UNMutableNotificationContent()
-          content.title = NSString.localizedUserNotificationString(forKey: "Check your wifi connection", arguments: nil)       //body content of the notifcation
+          content.title = NSString.localizedUserNotificationString(forKey: "Check your WiFi connection", arguments: nil)       //body content of the notifcation
           if(String(describing: time!) == "1") {
-            content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + " minute and are still not connected to wifi"), arguments: nil)
+            content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + " minute and are still not connected to WiFi"), arguments: nil)
           } else {
-            content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + " minutes and are still not connected to wifi"), arguments: nil)
+            content.body = NSString.localizedUserNotificationString(forKey: ("It appears you have been at " + identif! + " for " + String(describing: time!) + " minutes and are still not connected to WiFi"), arguments: nil)
           }
           let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (TimeInterval(time!*60+1)), repeats: false)  //creates the notification and sets when it will be sent
           let request = UNNotificationRequest(identifier: identif!, content: content, trigger: trigger)              //creates the request
@@ -198,44 +198,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let isReachable = flags == .reachable
     let needsConnection = flags == .connectionRequired
 
-    if isVPNConnected() {
-      return true
-    }
     return isReachable && !needsConnection
-  }
-  
-  
-  func isVPNConnected() -> Bool {
-    print("is connected to VPN?")
-    let host = "www.example.com"
-    guard let reachability = SCNetworkReachabilityCreateWithName(nil, host) else {
-      return false
-    }
-    var flags = SCNetworkReachabilityFlags()
-    if SCNetworkReachabilityGetFlags(reachability, &flags) == false {
-      return false
-    }
-    let isOnline = flags.contains(.reachable) && !flags.contains(.connectionRequired)
-    if !isOnline {
-      return false
-    }
-    let isMobileNetwork = flags.contains(.isWWAN)
-    let isTransientConnection = flags.contains(.transientConnection)
-    if isMobileNetwork {
-      if let settings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? Dictionary<String, Any>,
-        let scopes = settings["__SCOPED__"] as? [String:Any] {
-        for (key, _) in scopes {
-          if key.contains("tap") || key.contains("tun") || key.contains("ppp") {
-            print("connected to VPN")
-            return true
-          }
-        }
-      }
-      print("not connected to VPN")
-      return false
-    } else {
-      return isTransientConnection
-    }
   }
   
 }

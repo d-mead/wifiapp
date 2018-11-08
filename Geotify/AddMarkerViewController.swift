@@ -152,6 +152,8 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     addButton.isEnabled = !radiusTextField.text!.isEmpty && !noteTextField.text!.isEmpty
     removeRadiusOverlay()
     addRadiusOverlay()
+    removeRadiusOverlay()
+    addRadiusOverlay()
   }
 //
   @IBAction func onCancel(sender: AnyObject) {
@@ -217,6 +219,7 @@ class AddMarkerViewController: UITableViewController, UIPickerViewDelegate, UIPi
     }
   }
   func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+    radiusTextField.endEditing(true)
     removeRadiusOverlay()
     addRadiusOverlay()
   }

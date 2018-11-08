@@ -45,6 +45,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
     
     mapView.showAnnotations(mapView.annotations, animated: false)
     zoomAnnotationsOnMapView()
+    zoomAnnotationsOnMapView()
   }
   
   
@@ -65,6 +66,7 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   
   //sets the zoom on the map view to encompass all of the annotations
   func zoomAnnotationsOnMapView() {
+    print("zooming")
     if (mapView.annotations.count < 2) {
       return
     }
@@ -142,7 +144,6 @@ class MarkerViewController: UIViewController, UITableViewDataSource, UITableView
   
   //update the geo table
   @objc func updateGeoTable() {
-    print("action has started")
     geoTable.reloadData()
     let cells = geoTable.visibleCells
     for cell in cells {
