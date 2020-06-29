@@ -28,15 +28,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D40BE6B1209CE62C00C6AA2A /* SF Pro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "SF Pro"; path = "../../../Desktop/SF Pro"; sourceTree = "<group>"; };
+		D40BE6B1209CE62C00C6AA2A /* SF Pro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "SF Pro"; path = "../SF Pro"; sourceTree = "<group>"; };
 		D444B33F2073E46600599980 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		D44864EF208690D0004DF109 /* LocationSearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
 		D44864F3208A84C1004DF109 /* EditMarkerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMarkerViewController.swift; sourceTree = "<group>"; };
 		D4506C2F214DF2FB0024E5A3 /* home.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = home.gpx; path = ../home.gpx; sourceTree = "<group>"; };
 		D4B6881420755721003DA63E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		D4D99B4020A077A90070A69B /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Regular.otf"; path = "../../Desktop/SF Pro/SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
-		D4D99B4220A078090070A69B /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Bold.otf"; path = "../../Desktop/SF Pro/SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
-		D4D99B4420A078B50070A69B /* SF-Pro-Display-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Semibold.otf"; path = "../../Desktop/SF Pro/SF-Pro-Display-Semibold.otf"; sourceTree = "<group>"; };
+		D4D99B4020A077A90070A69B /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Regular.otf"; path = "SF Pro/SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
+		D4D99B4220A078090070A69B /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Bold.otf"; path = "SF Pro/SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
+		D4D99B4420A078B50070A69B /* SF-Pro-Display-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Display-Semibold.otf"; path = "SF Pro/SF-Pro-Display-Semibold.otf"; sourceTree = "<group>"; };
 		D90CB64D1A739B7A00228A1F /* Geotify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Geotify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D90CB6511A739B7A00228A1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D90CB6521A739B7A00228A1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -173,6 +173,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
